@@ -61,7 +61,13 @@ While LLMs excel in general NLP, their ability to reason about scientific system
 
 ### FoamBench
 
-![FoamBench results](figs/results_foambench.png)
+**Latest Foam-Agent version** (models evaluated in V2 and the Codex CLI / Claude Code coding agents):
+
+![FoamBench results, latest Foam-Agent version](figs/results_foambench.png)
+
+**Previous Foam-Agent version** (models from the original paper and the models evaluated in V2, with the coding agents):
+
+![FoamBench results, previous Foam-Agent version](figs/results_foambench_previous_version.png)
 
 ---
 

@@ -42,7 +42,13 @@ Get started with CFDLLMBench in just a few steps:
 
 ### FoamBench
 
-![FoamBench results](../figs/results_foambench.png)
+**Latest Foam-Agent version** (models evaluated in V2 and the Codex CLI / Claude Code coding agents):
+
+![FoamBench results, latest Foam-Agent version](../figs/results_foambench.png)
+
+**Previous Foam-Agent version** (models from the original paper and the models evaluated in V2, with the coding agents):
+
+![FoamBench results, previous Foam-Agent version](../figs/results_foambench_previous_version.png)
 
 Our comprehensive evaluation reveals significant challenges for current LLMs in scientific computing domains, with substantial room for improvement in CFD-specific reasoning and tool use.
 
