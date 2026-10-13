@@ -49,7 +49,17 @@ While LLMs excel in general NLP, their ability to reason about scientific system
 
 ## 📈 Main Results
 
-![All Scores](figs/all_bars.png)
+### CFDQuery
+
+![CFDQuery results](figs/results_cfdquery.png)
+
+### CFDCodeBench
+
+![CFDCodeBench results](figs/results_cfdcodebench.png)
+
+### FoamBench
+
+![FoamBench results](figs/results_foambench.png)
 
 ---
 

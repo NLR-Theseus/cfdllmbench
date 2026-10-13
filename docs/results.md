@@ -4,7 +4,17 @@ This page presents comprehensive evaluation results across all CFDLLMBench compo
 
 ## Overall Performance
 
-![All Scores](../figs/all_bars.png)
+### CFDQuery
+
+![CFDQuery results](../figs/results_cfdquery.png)
+
+### CFDCodeBench
+
+![CFDCodeBench results](../figs/results_cfdcodebench.png)
+
+### FoamBench
+
+![FoamBench results](../figs/results_foambench.png)
 
 ## Key Findings
 

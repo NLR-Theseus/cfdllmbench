@@ -32,7 +32,17 @@ Get started with CFDLLMBench in just a few steps:
 
 ## :chart_with_upwards_trend: Key Results
 
-![All Scores](../figs/all_bars.png)
+### CFDQuery
+
+![CFDQuery results](../figs/results_cfdquery.png)
+
+### CFDCodeBench
+
+![CFDCodeBench results](../figs/results_cfdcodebench.png)
+
+### FoamBench
+
+![FoamBench results](../figs/results_foambench.png)
 
 Our comprehensive evaluation reveals significant challenges for current LLMs in scientific computing domains, with substantial room for improvement in CFD-specific reasoning and tool use.
 
