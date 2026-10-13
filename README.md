@@ -7,6 +7,7 @@
 - ✅ **FoamBench**: End-to-end automation of OpenFOAM simulations from natural language.
 
 > **What's new in V2:** we updated the prompts for some cases, evaluated newer LLMs, and evaluated the latest version of Foam-Agent.
+> The latest (V2) datasets are included in this repository (see [Datasets](#-datasets)).
 
 ---
 
@@ -40,6 +41,18 @@ While LLMs excel in general NLP, their ability to reason about scientific system
 - 110 Basic + 16 Advanced OpenFOAM simulation tasks.
 - Benchmarks end-to-end tool use: case creation → execution → postprocessing.
 - Assesses multi-step reasoning, domain adaptation, and recovery.
+
+---
+
+## 📂 Datasets
+
+The latest (V2) datasets are in this repository:
+
+- **CFDQuery**: [`CFDQuery/CFDQuery.json`](CFDQuery/CFDQuery.json)
+- **CFDCodeBench**: [`CFDCodeBench/PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json`](CFDCodeBench/PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json) (task definitions) and [`CFDCodeBench/PDE_Benchmark/prompt/prompts.json`](CFDCodeBench/PDE_Benchmark/prompt/prompts.json) (prompts)
+- **FoamBench**: [`FoamBench/Dataset/FoamBench_basic.json`](FoamBench/Dataset/FoamBench_basic.json) and [`FoamBench/Dataset/FoamBench_advanced.json`](FoamBench/Dataset/FoamBench_advanced.json)
+
+The datasets used in the original paper are on Kaggle: [CFDQuery](https://www.kaggle.com/datasets/nithinsekhar/cfdquery/data), [CFDCodeBench](https://www.kaggle.com/datasets/nithinsekhar/cfdcodebench/data), [FoamBench](https://www.kaggle.com/datasets/nithinsekhar/foambench/data).
 
 ---
 

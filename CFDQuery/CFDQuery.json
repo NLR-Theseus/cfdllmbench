@@ -1,0 +1,2074 @@
+{
+  "CFD QA": [
+    {
+      "question_index": 1,
+      "question_content": "Which of the following is closest to the correct modified equation for the discretized 1D advection equation using second-order central difference in space and third-order Runge-Kutta (RK3) in time?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{a \\Delta x^2}{6} \\frac{\\partial^3 u}{\\partial x^3} + \\mathcal{O}(\\Delta x^3)$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{a \\Delta x^2}{2} \\frac{\\partial^2 u}{\\partial x^2} + \\mathcal{O}(\\Delta x^3)$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = -\\frac{a \\Delta x^2}{6} \\frac{\\partial^3 u}{\\partial x^3} + \\frac{a \\Delta t^2}{6} \\frac{\\partial^3 u}{\\partial t^3} + \\mathcal{O}(\\Delta x^3)$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{a \\Delta x^2}{6} \\frac{\\partial^3 u}{\\partial x^3} - \\frac{a^3 \\Delta t^2}{6} \\frac{\\partial^3 u}{\\partial x^3} + \\mathcal{O}(\\Delta x^3)$$"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 2,
+      "question_content": "You are analyzing the dissipative behavior of a finite difference scheme for the 1D linear advection equation $$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = 0$$ using the Lax-Friedrichs method: $$u_j^{n+1} = \\frac{1}{2}(u_{j+1}^n + u_{j-1}^n) - \\frac{a \\Delta t}{2\\Delta x}(u_{j+1}^n - u_{j-1}^n)$$. Which of the following modified PDEs correctly captures the leading-order numerical dissipation introduced by this scheme?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{a^2 \\Delta t^2}{6} \\frac{\\partial^3 u}{\\partial x^3}$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{\\Delta x^2}{2\\Delta t} \\frac{\\partial^2 u}{\\partial x^2}$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = \\frac{a \\Delta x^2}{6} \\frac{\\partial^3 u}{\\partial x^3}$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\frac{\\partial u}{\\partial t} + a \\frac{\\partial u}{\\partial x} = -\\frac{a^2 \\Delta t}{2} \\frac{\\partial^2 u}{\\partial x^2}$$"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 3,
+      "question_content": "Consider the general finite difference approximation for the second derivative on a uniform grid:\n\n$$\n\\frac{\\partial^2 u}{\\partial x^2} \\approx \\frac{1}{\\Delta x^2}\\left( a u_{i-2} + b u_{i-1} + c u_i + b u_{i+1} + a u_{i+2} \\right)\n$$\n\nwhere $a$, $b$, and $c$ are constants chosen to achieve fourth-order accuracy. If this scheme is applied to $u(x) = e^{i k x}$, which of the following expressions best represents the numerical dispersion relation and **ensures both fourth-order accuracy and stability on all $k \\in [0, \\pi/\\Delta x]$**?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The dispersion relation is exact, i.e., $k_{\\text{mod}}^2 = k^2$, for all $k$, indicating zero phase and group error."
+        },
+        {
+          "option_index": 2,
+          "option_content": "$k_{\\text{mod}}^2 = \\frac{1}{\\Delta x^2}\\left( -2a \\cos(2k\\Delta x) - 2b \\cos(k\\Delta x) + c \\right)$, and for stability the condition $a < 0,\\ b > 0$ must hold."
+        },
+        {
+          "option_index": 3,
+          "option_content": "To achieve 4th order accuracy and stability, the coefficients must satisfy: $a = -\\frac{1}{12},\\ b = \\frac{4}{3},\\ c = -\\frac{5}{2}$, and the amplification factor $G(k)$ must satisfy $|G(k)| \\leq 1$ for all $k$."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The modified wavenumber is: $k_{\\text{mod}} = \\frac{\\sin(k\\Delta x)}{\\Delta x}$, so the scheme is inherently first-order accurate."
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 4,
+      "question_content": "Consider a second-order accurate central difference scheme for approximating \\(\\frac{d^2u}{dx^2}\\) on a non-uniform grid where \\(h_{i-1} = x_i - x_{i-1}\\) and \\(h_i = x_{i+1} - x_i\\). The second derivative is approximated by a combination of values \\(u_{i-1}, u_i, u_{i+1}\\) as \\(\\frac{d^2u}{dx^2}|_{x_i} \\approx a u_{i-1} + b u_i + c u_{i+1}\\). Which of the following gives the correct expressions for coefficients \\(a, b, c\\)?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$a = \\frac{2}{h_{i-1}(h_{i-1} + h_i)},\\quad b = -\\frac{2}{h_{i-1} h_i},\\quad c = \\frac{2}{h_i(h_{i-1} + h_i)}$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$a = \\frac{2}{h_i(h_{i-1} + h_i)},\\quad b = -\\frac{2}{h_{i-1} h_i},\\quad c = \\frac{2}{h_{i-1}(h_{i-1} + h_i)}$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$a = \\frac{2}{h_{i-1}h_i},\\quad b = -\\frac{2}{h_{i-1}(h_{i-1} + h_i)},\\quad c = \\frac{2}{h_i(h_{i-1} + h_i)}$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$a = \\frac{2}{h_{i-1}(h_i - h_{i-1})},\\quad b = -\\frac{2}{h_i h_{i-1}},\\quad c = \\frac{2}{h_i(h_i - h_{i-1})}$$"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 5,
+      "question_content": "Consider the second-order linear differential equation with a variable coefficient: $$\\frac{d}{dx}\\left(p(x)\\frac{du}{dx}\\right) = f(x)$$ with non-uniform grid spacing and the finite difference approximation: $$\\left.\\frac{d}{dx}\\left(p(x)\\frac{du}{dx}\\right)\\right|_{x_i} \\approx \\frac{1}{h_i^*}\\left[ p_{i+1/2} \\frac{u_{i+1} - u_i}{h_i} - p_{i-1/2} \\frac{u_i - u_{i-1}}{h_{i-1}} \\right]$$ where $$h_i^* = \\frac{1}{2}(h_i + h_{i-1})$$. What is the order of the **leading truncation error**?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(h_i - h_{i-1})$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(h_i^2 + h_{i-1}^2)$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(\\max(h_i, h_{i-1})^2)$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\mathcal{O}(\\frac{h_i - h_{i-1}}{h_i + h_{i-1}})$$"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 6,
+      "question_content": "Consider the compact finite difference scheme: $$\\alpha f'_{i-1} + f'_i + \\alpha f'_{i+1} = \\frac{a}{2h}(f_{i+1} - f_{i-1})$$. Under periodic boundary conditions and Fourier mode $$f_j = e^{ikx_j}$$, the modified wavenumber becomes: $$k^* = \\frac{a \\sin(kh)}{1 + 2\\alpha \\cos(kh)}$$. What conditions on $$a$$ and $$\\alpha$$ make this a fourth-order accurate scheme?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$a = 1, \\quad \\alpha = \\frac{1}{4}$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$a = \\frac{4}{3}, \\quad \\alpha = \\frac{1}{3}$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$a = \\frac{3}{2}, \\quad \\alpha = \\frac{1}{4}$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$a = \\frac{2}{3}, \\quad \\alpha = \\frac{1}{6}$$"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 7,
+      "question_content": "You are given a smooth coordinate mapping $$x = x(\\xi)$$ from a uniform computational grid $$\\xi_i = i \\Delta \\xi$$ to a non-uniform physical grid $$x_i = x(\\xi_i)$$. You approximate $$\\frac{du}{dx}$$ via: $$\\left.\\frac{du}{dx}\\right|_{x_i} \\approx \\frac{1}{J_i} \\cdot \\frac{u_{i+1} - u_{i-1}}{2 \\Delta \\xi}$$ where $$J_i = \\left.\\frac{dx}{d\\xi}\\right|_{\\xi_i}$$ is the Jacobian of the transformation. If $$J_i$$ varies significantly, what is the effective order of accuracy of this approximation in physical space?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(\\Delta x^2)$$ — second-order accurate"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(\\Delta x)$$ — first-order accurate due to Jacobian variation"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(\\Delta x^{1.5})$$ — intermediate degradation from nonlinear mapping"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\mathcal{O}(\\Delta x^0)$$ — zero-order consistent due to mapping inconsistency"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 8,
+      "question_content": "In solving the compressible 2D Euler equations on a smooth but non-orthogonal curvilinear grid using a finite-difference scheme based on primitive (non-conservative) variables and central differencing, an unexpected entropy generation is observed in the absence of physical dissipation. Assuming a symmetric initial condition and ideal gas law, what is the most probable leading-order mechanism responsible for the observed non-physical entropy growth?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Discretization error is \\( \\mathcal{O}(h^2) \\) and cancels out due to symmetry; entropy growth must be due to round-off"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Violation of geometric conservation law introduces \\( \\mathcal{O}(h^2) \\) spurious kinetic energy sources"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Loss of discrete compatibility between pressure gradient and velocity divergence introduces \\( \\mathcal{O}(h) \\) entropy-generating pseudo-compression waves"
+        },
+        {
+          "option_index": 4,
+          "option_content": "The use of primitive variables inherently causes \\( \\mathcal{O}(h^3) \\) anisotropic pressure-velocity decoupling on non-orthogonal grids"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 9,
+      "question_content": "In solving the compressible Navier-Stokes equations for a low-Mach internal flow (e.g., airfoil at Ma = 0.05) using a preconditioned Roe-type scheme, the preconditioning matrix \\( \\mathbf{P} \\) is applied to rescale acoustic and convective wave speeds. Suppose \\( \\mathbf{P} \\) is only applied in the flux Jacobian but not consistently in the time derivative or residual smoothing terms. What is the dominant effect of this inconsistency on the solution?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Residual will stagnate due to ill-conditioning, but steady-state accuracy remains unaffected"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Preconditioning improves convergence and accuracy regardless of consistency if CFL is low"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Inconsistency introduces \\( \\mathcal{O}(1/Ma) \\) artificial compression waves that corrupt the pressure field"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Temporal discretization absorbs the inconsistency if dual time stepping is used with local time stepping"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 10,
+      "question_content": "A fifth-order WENO scheme is used to simulate a 2D inviscid shear layer with initial velocity profile \\( u(y) = U_0 \\tanh(y/\\delta) \\) and \\( v = 0 \\), perturbed slightly to trigger Kelvin–Helmholtz instability. The grid is uniform, and WENO reconstruction is applied dimension-by-dimension. What is the most likely source of error that causes under-prediction of vortex roll-up and slower growth of instability when compared to spectral DNS data?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "WENO is too dissipative near discontinuities, reducing vortex strength uniformly"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Nonlinear weights suppress high-order accuracy near extrema, reducing convergence rate"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Dimension-by-dimension WENO introduces numerical anisotropy, smearing shear in non-grid-aligned directions"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Shear layer instability is not resolvable without explicit subgrid-scale modeling"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 11,
+      "question_content": "A high-order split-form entropy-stable DG method is used to solve the compressible Navier–Stokes equations augmented with multiple passive scalars \\( Z_i \\) representing species mass fractions. The scalar fluxes are discretized using central fluxes, while the main system uses entropy-conservative fluxes. The mesh is curved and moving, with a time-dependent geometric mapping \\( \\mathbf{x}(\\xi, \\eta, t) \\), and the Jacobian \\( J \\in \\mathbb{P}^{p-1} \\), while \\( \\mathbf{U}, Z_i \\in \\mathbb{P}^{p} \\). The total entropy includes contributions from both the thermal and scalar components. A slow increase in entropy is observed over long-time simulations. What is the most plausible dominant source of this entropy growth?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Passive scalars do contribute to the total entropy, but central fluxes lack numerical dissipation or entropy-conservative symmetry, allowing unbalanced entropy production when coupled with geometric drift"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Geometric under-resolution introduces \\( \\mathcal{O}(h^p) \\) aliasing in the scalar–Jacobian interaction terms, particularly in \\( J \\cdot Z_i \\ln Z_i \\), producing a non-canceling entropy residual in the volume"
+        },
+        {
+          "option_index": 3,
+          "option_content": "The fluxes for \\( \\mathbf{U} \\) are entropy-conservative, so the system entropy must be preserved if the quadrature is exact and mapping is smooth"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Entropy variable projection for \\( Z_i \\) is mismatched in degree due to central flux interpolation, and without symmetric flux formulation or flux–Jacobian commutation, this leads to nonzero residuals that scale as \\( \\mathcal{O}(h^p) \\)"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 12,
+      "question_content": "In a reacting flow simulation using a high-order entropy-stable DG method with multiple conserved scalars and a moving, curved mesh, the main system fluxes are entropy-conservative split-form Roe-type, while scalar transport fluxes are handled with entropy-symmetric central fluxes. The scalar entropy variables \\( W_{Z_i} = \\ln Z_i \\) are not explicitly projected into a consistent modal basis. The geometric Jacobian \\( J \\) is represented with degree \\( p - 1 \\), while solution fields are degree \\( p \\), and the time-marching scheme is third-order accurate. Over time, long-wavelength entropy oscillations are observed. What is the most probable combined mechanism for the entropy imbalance?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Central fluxes for scalars do not supply dissipation, but with exact quadrature and modal consistency, they would not produce entropy drift in isolation"
+        },
+        {
+          "option_index": 2,
+          "option_content": "The mismatch between scalar entropy variables and central flux evaluation introduces \\( \\mathcal{O}(h^p) \\) modal aliasing, which leaks entropy into unresolved high-frequency modes"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Mesh movement modifies the geometric Jacobian in time, breaking the discrete GCL, which is the dominant source of global entropy error even if the fluxes are symmetric"
+        },
+        {
+          "option_index": 4,
+          "option_content": "The time-marching scheme is not entropy conservative, and thus temporal quadrature errors accumulate entropy residuals regardless of spatial discretization"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 13,
+      "question_content": "In a high-order DG method for reactive flow on a curved, moving mesh, the solution \\( U = [\\rho, \\rho u, \\rho E, Y_1, ..., Y_N] \\) evolves with split-form entropy-conservative fluxes and central source terms \\( \\omega_i(Y,T) \\) for species reactions. The Jacobian \\( J(x,y,t) \\in \\mathbb{P}^{p-1} \\), while the species \\( Y_i, T \\in \\mathbb{P}^{p} \\). Suppose no entropy projection is applied to the source terms. Entropy growth is observed. Which mechanism most likely dominates the observed entropy imbalance?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The use of central discretization for source terms fails to match the entropy-variable projection space, leading to unresolved \\( \\ln Y_i \\cdot \\omega_i \\) product aliasing that scales as \\( \\mathcal{O}(h^p) \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Temporal integration scheme introduces entropy leakage due to Runge-Kutta substep drift, which dominates in unsteady stiff regimes regardless of source structure"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Jacobian under-resolution creates geometric aliasing in \\( J \\cdot \\ln Y_i \\) and \\( J \\cdot T \\) terms, which results in entropy oscillations at interfaces but not volume growth"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Split-form fluxes eliminate aliasing from convective terms, but introduce higher-order cross-mode interaction between \\( U \\) and \\( Y_i \\), resulting in kinetic-entropy mode transfer"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 14,
+      "question_content": "Consider a reacting compressible Navier–Stokes solver using high-order split-form DG on a curved, moving mesh. The solution includes \\( \\mathbf{U} = [\\rho, \\rho u, \\rho E, Y_i] \\) with source terms \\( \\omega_i = A_i Y_i \\exp(-E_i/T) \\), and geometry mapping Jacobian \\( J \\in \\mathbb{P}^{p-1} \\). The entropy variable for species is \\( W_i = \\ln Y_i \\). No modal projection is applied to source terms. At the flame-shock interaction zone, entropy drift and aliasing-induced overshoots are observed. Which of the following most accurately quantifies the dominant source of entropy production and its underlying mechanics?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Modal mismatch of \\( \\omega_i \\in \\mathbb{P}^p \\) and \\( W_i = \\ln Y_i \\in \\mathbb{P}^{2p} \\) causes non-orthogonal residual \\( \\epsilon \\sim \\mathcal{O}(h^p) \\), amplified in high-curvature regions where \\( J \\cdot W_i \\cdot \\omega_i \\notin \\mathbb{P}^{3p-1} \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Shock misalignment with element edges generates geometric non-conservativity, leading to entropy leakage at interfaces through misestimated flux Jacobians"
+        },
+        {
+          "option_index": 3,
+          "option_content": "The exponential source \\( \\omega_i \\) dominates entropy evolution, but if the shock is aligned, the split-form structure fully cancels out entropy flux imbalances"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Post-shock relaxation delay from insufficient artificial viscosity delays energy dissipation, but entropy balance remains formally closed if quadrature is exact"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 15,
+      "question_content": "In a reacting flow solver on curved high-order DG elements, the domain has multiple hp-interface transitions and contains a flame front advancing into a low-Mach post-shock layer. The source term is \\( \\omega_i = A_i Y_i^2 \\exp(-E_i/(T+\\sin(x))) \\), Jacobian \\( J \\in \\mathbb{P}^{p-1} \\), while \\( Y_i, T \\in \\mathbb{P}^p \\). No entropy variable projection is applied. Severe entropy drift is observed localized near p-discontinuities and curvature peaks. What mechanism most likely produces the dominant irreversible entropy production?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Modal inconsistency between \\( \\omega_i \\in \\mathbb{P}^{3p} \\) and \\( \\ln Y_i \\in \\mathbb{P}^{2p} \\) leads to residual terms \\( W_i \\omega_i \\in \\mathbb{P}^{5p} \\), causing high-frequency aliasing with curvature amplification via \\( J \\cdot \\sin(x) \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Quadrature on curved elements loses accuracy for \\( \\sin(x) \\) under the geometric mapping, leading to global entropy error even with exact flux and projection"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Exponential source stiffness dominates entropy response, and without time splitting, entropy growth is due to RK temporal aliasing under stiff dynamics"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Split-form structure lacks entropy correction terms for non-conservative curvature-driven source coupling, leading to oscillatory divergence"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 16,
+      "question_content": "You are solving the scalar conservation law:\n\n\\[ \\frac{\\partial u}{\\partial t} + \\frac{\\partial f(u)}{\\partial x} = 0 \\quad \\text{with} \\quad f(u) = \\frac{1}{2} u^2 \\]\n\nThe entropy pair is:\n\n\\[ U(u) = \\frac{1}{2} u^2, \\quad F(u) = \\frac{1}{3} u^3 \\]\n\nYou use a finite volume method with a second-order MUSCL reconstruction and a minmod TVD limiter applied to the slope. The numerical flux at interface \\( i+1/2 \\) is:\n\n\\[ f_{i+1/2} = \\frac{1}{2} (f(u_i^+) + f(u_{i+1}^-)) - \\frac{1}{2} a_{i+1/2} (u_{i+1}^- - u_i^+) \\]\n\nwhere \\( a_{i+1/2} = \\max(|u_i^+|, |u_{i+1}^-|) \\), and \\( u_i^+, u_{i+1}^- \\) are the limited values at the left and right sides.\n\nAt a shock, you observe that the limiter reduces the slope to zero in one cell. The shock moves left to right.\n\nWhich of the following best describes the entropy behavior across the shock?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The scheme is entropy stable because the limiter suppresses oscillations and prevents nonphysical values."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The scheme violates the discrete entropy inequality because the limiter disrupts flux symmetry and absorbs entropy."
+        },
+        {
+          "option_index": 3,
+          "option_content": "Entropy remains conserved because the numerical flux is consistent and satisfies Lax-Friedrichs form."
+        },
+        {
+          "option_index": 4,
+          "option_content": "Entropy error is negligible because the limiter only acts locally and does not affect integral quantities."
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 17,
+      "question_content": "You solve the 2D Euler equations using a steady finite volume method with Roe flux for the primal equation. You use a discrete adjoint method to estimate the error in lift coefficient. \n\nThe primal residual is \\( R(U) = 0 \\), and you solve the adjoint equation:\n\n\\[ \\left(\\frac{\\partial R}{\\partial U}\\right)^T \\lambda = \\frac{\\partial J}{\\partial U} \\]\n\nHowever, the Jacobian \\( \\frac{\\partial R}{\\partial U} \\) is computed using the local Lax-Friedrichs flux instead of the Roe flux used in the primal solve.\n\nWhat is the most likely consequence of this inconsistency?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The adjoint solution remains accurate because both fluxes are consistent and stable."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The error estimate becomes unreliable because the linearization is inconsistent with the actual residual."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The adjoint solution becomes unstable due to numerical mismatch of flux derivatives."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The effect is negligible because the primal residual vanishes at convergence."
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 18,
+      "question_content": "Let \\( f(x) = \\sin(5x) + e^{-x^2} \\), and suppose we approximate \\( f^{(4)}(0) \\) using a symmetric-looking stencil:\n\n\\[ f^{(4)}(x_2) \\approx \\frac{1}{h^4} \\left[ -f(x_0) + 4f(x_1) - 6f(x_2) + 4f(x_3) - f(x_4) \\right] \\]\n\nwith nodes \\( x_0 = -0.4, x_1 = -0.2, x_2 = 0.0, x_3 = 0.3, x_4 = 0.7 \\). This results in an approximate value \\( f^{(4)}(0) \\approx 164.1 \\), while the exact value is \\( f^{(4)}(0) \\approx 168.3 \\).\n\nWhich of the following best explains the error?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Although the stencil appears symmetric, the actual spacing is uneven and biases the approximation."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The fourth derivative of \\( f(x) \\) is too irregular to be approximated by a fourth-order method."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The average spacing is too coarse for the high-frequency sine term to be captured."
+        },
+        {
+          "option_index": 4,
+          "option_content": "This is round-off error amplified by high powers in the denominator of the formula."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 19,
+      "question_content": "We discretize the operator \\( \\frac{d}{dx} \\left( p(x) \\frac{du}{dx} \\right) \\) on a non-uniform 1D grid using the formula:\n\n\\[ \\left. \\frac{d}{dx}\\left( p(x)\\frac{du}{dx} \\right) \\right|_{x_i} \\approx \\frac{1}{h_i^*}\\left[ p_{i+1/2} \\frac{u_{i+1} - u_i}{h_i} - p_{i-1/2} \\frac{u_i - u_{i-1}}{h_{i-1}} \\right] \\]\n\nwith \\( h_i^* = \\frac{1}{2}(h_i + h_{i-1}) \\). Suppose \\( u(x), p(x) \\) are smooth. When \\( h_i \\ne h_{i-1} \\), what is the **leading-order behavior of the truncation error** at node \\( x_i \\)?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(h_i - h_{i-1})$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(h_i^2 + h_{i-1}^2)$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(\\max(h_i, h_{i-1})^2)$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\mathcal{O}\\left(\\frac{h_i - h_{i-1}}{h_i + h_{i-1}}\\right)$$"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 20,
+      "question_content": "Consider the 1D diffusion operator \\( \\frac{d}{dx} \\left( p(x) \\frac{du}{dx} \\right) \\) on a non-uniform grid. A finite difference approximation is used:\n\n\\[ \\left. \\frac{d}{dx}\\left( p(x)\\frac{du}{dx} \\right) \\right|_{x_i} \\approx \\frac{1}{h_i^*}\\left[ p_{i+1/2} \\frac{u_{i+1} - u_i}{h_i} - p_{i-1/2} \\frac{u_i - u_{i-1}}{h_{i-1}} \\right] \\]\n\nwhere \\( h_i^* = \\frac{1}{2}(h_i + h_{i-1}) \\), and \\( p_{i+1/2} \\) is approximated by arithmetic average: \\( p_{i+1/2} = \\frac{p_i + p_{i+1}}{2} \\).\n\nNumerical experiments show that this leads to energy growth over time. What is the most likely cause?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Averaging \\( p \\) at interfaces breaks the symmetry of the flux divergence, introducing a non-zero net source term."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The approximation is still second-order accurate, but local errors accumulate in low-resolution regions."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The averaging preserves symmetry, but the non-uniform grid leads to numerical resonance."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The issue arises from poor time integration and can be fixed with smaller time steps."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 21,
+      "question_content": "In a 1D finite volume simulation of \\( \\partial_t u + \\partial_x u = 0 \\) on a non-uniform grid, the numerical flux at each interface is computed using a Godunov method. At interface \\( x_{i+1/2} \\), the left state \\( u^- \\) is computed via second-order reconstruction (limited), while the right state \\( u^+ \\) uses the raw cell average (no reconstruction).\n\nAlthough each interface flux appears well-defined, over time, the total mass (\\( \\int u dx \\)) drifts. What is the most likely explanation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The asymmetric reconstruction leads to numerical flux imbalance and violates global conservation."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The time integrator is unstable on non-uniform meshes without matching reconstruction."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The scheme is second-order accurate, but numerical dispersion mimics mass loss."
+        },
+        {
+          "option_index": 4,
+          "option_content": "Godunov fluxes are dissipative and require entropy corrections on non-uniform meshes."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 22,
+      "question_content": "You discretize \\( u''(x) \\) using a fourth-order compact finite difference scheme:\n\n\\[ \\alpha u''_{i-1} + u''_i + \\alpha u''_{i+1} = \\frac{a}{2h^2}(u_{i+1} - 2u_i + u_{i-1}) \\]\n\non a non-uniform grid where \\( h_{i-1} \\ne h_i \\), but still use a uniform average \\( h = \\tfrac{1}{2}(h_{i-1} + h_i) \\). You solve the resulting linear system using conjugate gradient.\n\nHowever, convergence is slow and the solution is inaccurate. What is the most likely cause?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The system matrix is no longer symmetric positive definite due to inconsistent discretization."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The discretization is still fourth-order, but the right-hand side vector was constructed incorrectly."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The compact scheme is unstable unless used with exact derivative boundary conditions."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The average spacing h is too coarse to resolve the second derivative on non-uniform grids."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 23,
+      "question_content": "Consider a mapping \\( x = x(\\xi) \\) from a uniform computational grid \\( \\xi_i = i \\Delta \\xi \\) to a non-uniform physical grid \\( x_i = x(\\xi_i) \\). Let \\( J_i = \\left. \\frac{dx}{d\\xi} \\right|_{\\xi_i} \\). To approximate \\( \\frac{du}{dx} \\), we use:\n\n\\[ \\left.\\frac{du}{dx}\\right|_{x_i} \\approx \\frac{1}{J_i} \\cdot \\frac{u_{i+1} - u_{i-1}}{2 \\Delta \\xi} \\]\n\nSuppose \\( u(x) \\in C^\\infty \\), but the Jacobian \\( J(\\xi) \\) varies significantly near \\( \\xi_i \\). What is the effective order of accuracy of this derivative approximation in **physical space**?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(\\Delta x^2)$$ — standard second-order accurate"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(\\Delta x)$$ — first-order accurate due to Jacobian mismatch"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(\\Delta x^{1.5})$$ — intermediate degradation from nonlinear mapping"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\mathcal{O}(\\Delta x^0)$$ — zero-order consistent due to mapping inconsistency"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 24,
+      "question_content": "A 6th-order compact finite difference is used to approximate \\( u''(x) \\) on a nearly uniform grid. However, for \\( h_{i-1} = 0.01 \\), \\( h_i = 0.1 \\), the result shows only first-order convergence. Why?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The format degenerates to first order when step ratios differ significantly."
+        },
+        {
+          "option_index": 2,
+          "option_content": "Floating-point cancellation dominates at small \\( h \\)."
+        },
+        {
+          "option_index": 3,
+          "option_content": "Even-order stencils generate spurious oscillations in asymmetric grids."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The scheme is unstable when \\( h_{i}/h_{i-1} > 5 \\)."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 25,
+      "question_content": "A finite volume solver solves \\( \\partial_t u = \\nabla \\cdot (D \\nabla u) + s(x,y) \\) on an unstructured triangular mesh. The diffusion flux is integrated over interfaces using second-order reconstruction. The source term \\( s(x,y) = 10 \\cos(50x) \\sin(30y) \\) is evaluated at the cell centers only. Although the solution appears visually smooth, post-processing reveals systematic global energy imbalance localized near oscillatory regions.\n\nWhich of the following most plausibly explains the imbalance?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The second-order reconstruction introduces anti-symmetric numerical dispersion near sharp gradients."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The source term is point-evaluated, which neglects its spatial variation across each cell."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The Gauss–Green interface integral fails to capture curved interface geometry on triangles."
+        },
+        {
+          "option_index": 4,
+          "option_content": "The triangle mesh induces aliasing due to inconsistent local metric tensors."
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 26,
+      "question_content": "A high-order compact finite difference scheme approximates \\( \\nabla u \\) on a smooth but non-orthogonal curvilinear mesh defined by mappings \\( x = x(\\xi, \\eta), y = y(\\xi, \\eta) \\). The transformed gradient is expressed as:\n\n\\[ \\nabla u = \\frac{\\partial u}{\\partial \\xi} \\nabla \\xi + \\frac{\\partial u}{\\partial \\eta} \\nabla \\eta \\]\n\nAlthough the grid metrics \\( \\nabla \\xi, \\nabla \\eta \\) are smooth, the mesh is not orthogonal: \\( \\nabla \\xi \\cdot \\nabla \\eta \\ne 0 \\). Derivatives \\( \\partial u/\\partial \\xi, \\partial u/\\partial \\eta \\) are computed using fourth-order compact stencils.\n\nWhich of the following best characterizes the **leading-order numerical anisotropy error** introduced by this mesh?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(h^2 \\cdot \\nabla \\xi \\cdot \\nabla \\eta)$$ — cross-metric induced anisotropic error due to mesh non-orthogonality"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(h^4)$$ — dominant compact stencil truncation error due to even-order accuracy"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(J^{-1})$$ — error amplification due to inverse Jacobian in transformation"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Negligible, as the smoothness of \\( \\nabla \\xi, \\nabla \\eta \\) cancels grid-induced anisotropy"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 27,
+      "question_content": "A finite volume scheme solves the conservation law \\( \\partial_t u + \\partial_x f(u) = s(u,x) \\) on a non-uniform mesh. Fluxes \\( f(u) \\) are reconstructed using MUSCL with interface-centered integration. The source term \\( s(u,x) = u \\cos(10x) \\) is evaluated only at cell centers. Over time, global conservation deteriorates despite local accuracy.\n\nWhich explanation best accounts for this behavior?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The source term is not integrated over the volume, breaking flux–source balance across cells."
+        },
+        {
+          "option_index": 2,
+          "option_content": "The MUSCL reconstruction introduces anti-symmetric dispersion, accumulating over non-uniform grids."
+        },
+        {
+          "option_index": 3,
+          "option_content": "The nonlinearity in \\( s(u,x) \\) induces stiffness and instability that appears as drift."
+        },
+        {
+          "option_index": 4,
+          "option_content": "High-frequency cosine terms require interface quadrature to remain conservative."
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 28,
+      "question_content": "Consider the second-order linear differential equation with a variable coefficient:\n\\[ \\frac{d}{dx}\\left(p(x)\\frac{du}{dx}\\right) = f(x) \\]\nOn a non-uniform grid, the following finite difference approximation is used:\n\\[ \\left.\\frac{d}{dx}\\left(p(x)\\frac{du}{dx}\\right)\\right|_{x_i} \\approx \\frac{1}{h_i^*}\\left[ p_{i+1/2} \\frac{u_{i+1} - u_i}{h_i} - p_{i-1/2} \\frac{u_i - u_{i-1}}{h_{i-1}} \\right] \\]\nwhere \\( h_i^* = \\frac{1}{2}(h_i + h_{i-1}) \\), and \\( h_i = x_{i+1} - x_i \\), \\( h_{i-1} = x_i - x_{i-1} \\), \\( p_{i+1/2} = p\\left(\\frac{x_i + x_{i+1}}{2}\\right) \\), \\( p_{i-1/2} = p\\left(\\frac{x_{i-1} + x_i}{2}\\right) \\).\n\nWhat is the order of the leading truncation error?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\mathcal{O}(h_i - h_{i-1})$$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\mathcal{O}(h_i^2 + h_{i-1}^2)$$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\mathcal{O}(\\max(h_i, h_{i-1})^2)$$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\mathcal{O}\\left(\\frac{h_i - h_{i-1}}{h_i + h_{i-1}}\\right)$$"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 29,
+      "question_content": "How many numerical diffusion terms does the second-order upwind Euler scheme have for a linear advection equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Infinity"
+        },
+        {
+          "option_index": 2,
+          "option_content": "No diffusion term"
+        },
+        {
+          "option_index": 3,
+          "option_content": "One term"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Two terms"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 30,
+      "question_content": "The numerical dispersion term of the second-order upwind Euler scheme is of \\_\\_\\_\\_\\_\\_\\_ for linear advection",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "third-order"
+        },
+        {
+          "option_index": 2,
+          "option_content": "second-order"
+        },
+        {
+          "option_index": 3,
+          "option_content": "first-order"
+        },
+        {
+          "option_index": 4,
+          "option_content": "no dispersion"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 31,
+      "question_content": "Consider a model of finite control volume (volume \\( V \\) and surface area) moving along the flow with elemental volume \\( dV \\), vector elemental surface area \\( d\\vec{S} \\), density \\( \\rho \\), and flow velocity \\( \\vec{V} \\). What is the time rate of change of mass inside the control volume?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\iiint_V \\rho \\, dV \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\frac{\\partial}{\\partial t} \\iiint_V \\rho \\, dV \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\frac{D}{Dt} \\iiint_V \\rho \\, dV \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\rho \\, dV \\)"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 32,
+      "question_content": "Consider a model of finite control volume (volume \\( V \\) and surface area) fixed in space with elemental volume \\( dV \\), vector elemental surface area \\( d\\vec{S} \\), density \\( \\rho \\), and flow velocity \\( \\vec{V} \\). \\\\ \\( \\rho \\vec{V} \\cdot d\\vec{S} \\) is positive when \\_\\_\\_\\_\\_\\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "The mass flow is outward"
+        },
+        {
+          "option_index": 2,
+          "option_content": "The mass flow is inward"
+        },
+        {
+          "option_index": 3,
+          "option_content": "The mass flow is positive"
+        },
+        {
+          "option_index": 4,
+          "option_content": "The mass flow is negative"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 33,
+      "question_content": "Consider an infinitesimally small fluid element with density \\( \\rho \\) (of dimensions dx, dy, and dz) fixed in space and fluid is moving across this element with a velocity \\( \\vec{V} = u \\hat{i} + v \\hat{j} + w \\hat{k} \\). The net mass flow across the fluid element is given by \\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\[ \\left( \\frac{\\partial (\\rho u)}{\\partial x} + \\frac{\\partial (\\rho v)}{\\partial y} + \\frac{\\partial (\\rho w)}{\\partial z} \\right) dx \\; dy \\; dz \\]"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\[ \\frac{\\partial (\\rho u)}{\\partial x} + \\frac{\\partial (\\rho v)}{\\partial y} + \\frac{\\partial (\\rho w)}{\\partial z} \\]"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\[ [\\rho] dx \\; dy \\; dz \\]"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\[ \\left( \\frac{\\partial (\\rho)}{\\partial x} + \\frac{\\partial (\\rho)}{\\partial y} + \\frac{\\partial (\\rho)}{\\partial z} \\right) dx \\; dy \\; dz \\]"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 34,
+      "question_content": "Consider an infinitesimally small fixed control volume with density \\( \\rho \\) (of dimensions dx, dy, and dz) fixed in space and fluid is moving across this element with a velocity \\( \\vec{V} = u \\hat{i} + v \\hat{j} + w \\hat{k} \\). The rate of change in mass of the fluid element is given by \\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\frac{\\partial (\\rho u)}{\\partial x} + \\frac{\\partial (\\rho v)}{\\partial y} + \\frac{\\partial (\\rho w)}{\\partial z} \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\frac{\\partial \\rho}{\\partial t} \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\frac{\\partial \\rho}{\\partial t} (dx \\; dy \\; dz) \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\[ \\left( \\frac{\\partial (\\rho u)}{\\partial x} + \\frac{\\partial (\\rho v)}{\\partial y} + \\frac{\\partial (\\rho w)}{\\partial z} \\right) dx \\; dy \\; dz \\]"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 35,
+      "question_content": "According to the conservation law, “Net mass flow across the fluid element is equal to the rate of change of mass inside the element”. But, stating the final equation, “Net mass flow across the fluid element + the rate of change of mass inside the element = 0”. Why is the operation not subtraction?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Irrespective of the law, the sum is always zero"
+        },
+        {
+          "option_index": 2,
+          "option_content": "The two terms are always opposite in sign"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Change in sign is not considered"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Rate of change may be increase or decrease"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 36,
+      "question_content": "Consider the continuity equation \\( \\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\vec{V}) = 0 \\). For an incompressible flow, this equation becomes \\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\nabla \\cdot (\\rho \\vec{V}) = 0 \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\frac{\\partial (\\rho \\vec{V})}{\\partial t} = 0 \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\text{div}(\\vec{V}) = 0 \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\text{div}(\\rho \\vec{V}) = 0 \\)"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 37,
+      "question_content": "Consider the continuity equation \\( \\frac{\\partial \\rho}{\\partial t} + \\nabla \\cdot (\\rho \\vec{V}) = 0 \\). For a steady flow this equation becomes \\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\nabla \\cdot (\\rho \\vec{V}) = 0 \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\nabla \\cdot (\\vec{V}) = 0 \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\text{div}(\\vec{V}) = 0 \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\text{curl}(\\vec{V}) = 0 \\)"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 38,
+      "question_content": "The physical property \\( \\Phi \\) of the general transport equation is replaced by \\_\\_\\_\\_\\_ to get momentum equation.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Velocity vector"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Mass"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Force vector"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Acceleration vector"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 39,
+      "question_content": "I am using an infinitesimally small element of fluid moving along with the flow as my model. What is the acceleration of this model in x-direction?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( a_x = \\frac{D\\vec{V}}{Dt} \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( a_x = \\frac{\\partial \\vec{V}}{\\partial t} \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( a_x = \\frac{D u}{Dt} \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( a_x = \\frac{\\partial u}{\\partial t} \\)"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 40,
+      "question_content": "The momentum equation is \\( \\rho \\frac{D u}{D t} = - \\frac{\\partial p}{\\partial x} + \\frac{\\partial \\tau_{xx}}{\\partial x} + \\frac{\\partial \\tau_{yx}}{\\partial y} + \\frac{\\partial \\tau_{zx}}{\\partial z} + \\rho f_x \\). Which of these statements about sign convention can be inferred from this equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Pressure force is taken as negative"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Tensile force is taken as negative"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Pressure force is taken as positive"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Pressure force is unsigned"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 41,
+      "question_content": "Which of these terms represent convection in the momentum equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\text{div}(u \\vec{V}) \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\text{div}(\\rho \\vec{V}) \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\nabla \\cdot (u \\vec{V}) \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\text{div}(\\rho u \\vec{V}) \\)"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 42,
+      "question_content": "The divergence of the stress tensor is \\_\\_\\_\\_\\_",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Scalar"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Vector"
+        },
+        {
+          "option_index": 3,
+          "option_content": "0"
+        },
+        {
+          "option_index": 4,
+          "option_content": "1"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 43,
+      "question_content": "What is the relationship between bulk viscosity coefficient (\\( \\lambda \\)) and the dynamic viscosity coefficient (\\( \\mu \\))?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\lambda = -\\frac{2}{3} \\mu \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\lambda = \\frac{2}{3} \\mu \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\lambda = -\\frac{1}{3} \\mu \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\lambda = -\\frac{1}{2} \\mu \\)"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 44,
+      "question_content": "For a Newtonian fluid express \\( \\tau_{yz} \\) in terms of velocity gradients.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\tau_{yz} = \\mu \\left( \\frac{\\partial v}{\\partial z} + \\frac{\\partial w}{\\partial y} \\right) \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\tau_{yz} = \\mu \\left( \\frac{\\partial u}{\\partial z} + \\frac{\\partial u}{\\partial y} \\right) \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\tau_{yz} = \\mu \\left( \\frac{\\partial v}{\\partial z} + \\frac{\\partial w}{\\partial x} \\right) \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\tau_{yz} = \\mu \\left( \\frac{\\partial w}{\\partial z} + \\frac{\\partial v}{\\partial y} \\right) \\)"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 45,
+      "question_content": "The viscosity terms in x-momentum equation is \\( \\frac{\\partial \\tau_{xx}}{\\partial x} + \\frac{\\partial \\tau_{yx}}{\\partial y} + \\frac{\\partial \\tau_{zx}}{\\partial z} \\). In a more general form, this becomes \\( \\text{div}(\\mu \\; \\text{grad} \\, u) \\). Which of these relations is used for this transformation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Thermodynamic relations"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Stress-strain relations"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Fluid flow relations"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Geometric relations"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 46,
+      "question_content": "The general transport equation is \\( \\frac{\\partial (\\rho \\Phi)}{\\partial t} + \\text{div}(\\rho \\Phi \\vec{u}) + \\text{div}(\\Gamma \\nabla \\Phi) + S \\). For Eulerian equations, which of the variables in the equation becomes zero?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\Gamma \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\rho \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\Phi \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\vec{u} \\)"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 47,
+      "question_content": "Which of these is the non-conservative differential form of Eulerian x-momentum equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\frac{\\partial (\\rho u)}{\\partial t} + \\nabla \\cdot (\\rho u \\vec{V}) = -\\frac{\\partial p}{\\partial x} + \\rho f_x \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\rho \\frac{D u}{D t} = -\\frac{\\partial p}{\\partial x} + \\rho f_x \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( (\\rho u) = -\\frac{\\partial p}{\\partial x} + \\rho f_x \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\rho \\frac{\\partial u}{\\partial t} = -\\frac{\\partial p}{\\partial x} + \\rho f_x \\)"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 48,
+      "question_content": "Euler form of momentum equations does not involve this property which of the below property.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Stress"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Friction"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Strain"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Temperature"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 49,
+      "question_content": "Which of these equations represent a Euler equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\rho \\frac{D \\vec{v}}{D t} = -\\nabla p + \\rho \\vec{g} \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\rho \\frac{D \\vec{v}}{D t} = -\\nabla p + \\mu \\nabla^2 \\vec{v} + \\rho \\vec{g} \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\nabla p = \\mu \\nabla^2 \\vec{v} + \\rho \\vec{g} \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( 0 = \\mu \\nabla^2 \\vec{v} + \\rho \\vec{g} \\)"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 50,
+      "question_content": "Which of the variables in the equation \\( \\rho \\frac{D u}{D t} = -\\frac{\\partial p}{\\partial x} + \\frac{\\partial \\tau_{xx}}{\\partial x} + \\frac{\\partial \\tau_{yx}}{\\partial y} + \\frac{\\partial \\tau_{zx}}{\\partial z} + \\rho f_x \\) will become zero for formulating Euler equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( f_x, \\tau_{yx}, \\tau_{zx} \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\tau_{xx}, \\tau_{yx}, u \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\tau_{xx}, \\tau_{yx}, \\tau_{zx} \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\tau_{xx}, p, \\tau_{zx} \\)"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 51,
+      "question_content": "In Euler form of energy equations, which of these terms is not present?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Rate of change of energy"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Heat radiation"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Heat source"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Thermal conductivity"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 52,
+      "question_content": "While converting the energy equation of fluid from one form to another, which of the following happens?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Either the left-hand side or the right-hand side of the equation changes"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Both the left-hand side and the right-hand side of the equation change"
+        },
+        {
+          "option_index": 3,
+          "option_content": "The right-hand side of the equation changes"
+        },
+        {
+          "option_index": 4,
+          "option_content": "The left-hand side of the equation changes"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 53,
+      "question_content": "When deriving energy term of dissipation, expressing \\( \\tau : \\nabla \\vec{V} \\) in terms of flow variables, we get \\( \\lambda \\varphi + \\mu \\psi \\). What are \\( \\varphi \\) and \\( \\psi \\)?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\varphi = \\left( \\frac{\\partial u}{\\partial x} + \\frac{\\partial v}{\\partial y} + \\frac{\\partial w}{\\partial z} \\right)^2 \\) and \\( \\psi = \\left( \\frac{\\partial u}{\\partial y} + \\frac{\\partial v}{\\partial z} \\right)^2 + \\left( \\frac{\\partial v}{\\partial x} + \\frac{\\partial w}{\\partial y} \\right)^2 + \\left( \\frac{\\partial w}{\\partial x} + \\frac{\\partial u}{\\partial z} \\right)^2"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\psi = \\left( \\frac{\\partial u}{\\partial x} + \\frac{\\partial v}{\\partial y} + \\frac{\\partial w}{\\partial z} \\right)^2 \\) and \\( \\varphi = \\left( \\frac{\\partial u}{\\partial y} + \\frac{\\partial v}{\\partial z} \\right)^2 + \\left( \\frac{\\partial v}{\\partial x} + \\frac{\\partial w}{\\partial y} \\right)^2 + \\left( \\frac{\\partial w}{\\partial x} + \\frac{\\partial u}{\\partial z} \\right)^2"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\psi = \\left( \\frac{\\partial u}{\\partial x} + \\frac{\\partial v}{\\partial y} + \\frac{\\partial w}{\\partial z} \\right)^2 \\) and \\( \\varphi = 2 \\left( \\frac{\\partial u}{\\partial x} \\right)^2 + 2 \\left( \\frac{\\partial v}{\\partial y} \\right)^2 + 2 \\left( \\frac{\\partial w}{\\partial z} \\right)^2 + \\left( \\frac{\\partial u}{\\partial y} + \\frac{\\partial v}{\\partial x} \\right)^2 + \\left( \\frac{\\partial v}{\\partial z} + \\frac{\\partial w}{\\partial y} \\right)^2 + \\left( \\frac{\\partial w}{\\partial x} + \\frac{\\partial u}{\\partial z} \\right)^2"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\varphi = \\left( \\frac{\\partial u}{\\partial x} + \\frac{\\partial v}{\\partial y} + \\frac{\\partial w}{\\partial z} \\right)^2 \\) and \\( \\psi = 2 \\left( \\frac{\\partial u}{\\partial x} \\right)^2 + 2 \\left( \\frac{\\partial v}{\\partial y} \\right)^2 + 2 \\left( \\frac{\\partial w}{\\partial z} \\right)^2 + \\left( \\frac{\\partial u}{\\partial y} + \\frac{\\partial v}{\\partial x} \\right)^2 + \\left( \\frac{\\partial v}{\\partial z} + \\frac{\\partial w}{\\partial y} \\right)^2 + \\left( \\frac{\\partial w}{\\partial x} + \\frac{\\partial u}{\\partial z} \\right)^2"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 54,
+      "question_content": "The energy equation which is in terms of total energy can be changed to terms of internal energy using \\_\\_\\_\\_\\_\\_.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "momentum equation"
+        },
+        {
+          "option_index": 2,
+          "option_content": "stress-strain relations"
+        },
+        {
+          "option_index": 3,
+          "option_content": "equations of state"
+        },
+        {
+          "option_index": 4,
+          "option_content": "continuity equation"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 55,
+      "question_content": "If \\( \\vec{f} \\) is the body force of an infinitesimally small element (volume \\( dx\\, dy\\, dz \\) and density \\( \\rho \\)) moving along with the flow (velocity \\( \\vec{V} \\)), which term is the work done by the body force?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "\\( \\vec{f} \\cdot \\vec{V} \\; dx\\, dy\\, dz \\)"
+        },
+        {
+          "option_index": 2,
+          "option_content": "\\( \\rho \\vec{f} \\cdot \\vec{V} \\)"
+        },
+        {
+          "option_index": 3,
+          "option_content": "\\( \\rho \\vec{f} \\cdot \\vec{V} \\; dx\\, dy\\, dz \\)"
+        },
+        {
+          "option_index": 4,
+          "option_content": "\\( \\rho f \\; dx\\, dy\\, dz \\)"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 56,
+      "question_content": "The energy equation \\[ \\frac{\\partial (\\rho \\hat{u})}{\\partial t} + \\nabla \\cdot (\\rho \\vec{V} \\hat{u}) = -\\nabla \\cdot \\vec{q}_s - p \\nabla \\cdot \\vec{V} - \\tau : \\nabla \\vec{V} + \\dot{q}_v \\] is applicable to \\_\\_\\_\\_\\_.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Both Newtonian and non-Newtonian fluids"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Newtonian fluids"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Non-Newtonian fluids"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Pseudo-plastics"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 57,
+      "question_content": "The rate of heat increase in a system depends on \\_\\_\\_\\_\\_.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "the rate of heat transferred to the system"
+        },
+        {
+          "option_index": 2,
+          "option_content": "the rate of heat generated by the system"
+        },
+        {
+          "option_index": 3,
+          "option_content": "neither the rate of heat generated by the system nor the rate of heat transferred to the system"
+        },
+        {
+          "option_index": 4,
+          "option_content": "both the rate of heat transferred to the system and the rate of heat generated by the system"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 58,
+      "question_content": "To derive the energy equation in terms of temperature, this law is used.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Newton’s third law of motion"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Zeroth law of thermodynamics"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Fick’s law"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Fourier’s law of heat conduction"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 59,
+      "question_content": "The relationship between the rate of heat transfer per unit area \\( \\dot{q}_s = -k \\nabla T \\). Where, \\( k \\) is a scalar value of thermal conductivity and \\( \\nabla T \\) is the gradient of temperature. Which of these following is wrong according to the above equation?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Heat transfer is different in different directions"
+        },
+        {
+          "option_index": 2,
+          "option_content": "The rate of heat transfer depends upon the temperature gradient"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Heat transfer is in the opposite direction of increasing temperature"
+        },
+        {
+          "option_index": 4,
+          "option_content": "k is the proportionality constant"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 60,
+      "question_content": "Which of these terms represent the rate of heat addition to the system due to heat transfer?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$-k \\nabla T$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$k \\nabla T$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$\\nabla \\cdot (k \\nabla T)$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$\\nabla (k \\nabla T ) $"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 61,
+      "question_content": "The Neumann and Dirichlet boundary conditions are ______ and ______ in mathematical terms.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "value specified, flux specified"
+        },
+        {
+          "option_index": 2,
+          "option_content": "flux specified, value specified"
+        },
+        {
+          "option_index": 3,
+          "option_content": "flux specified, gradient specified"
+        },
+        {
+          "option_index": 4,
+          "option_content": "value specified, time specified"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 62,
+      "question_content": "In Dirichlet boundary conditions, the flux values ______",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "can be calculated"
+        },
+        {
+          "option_index": 2,
+          "option_content": "are unknowns"
+        },
+        {
+          "option_index": 3,
+          "option_content": "are known"
+        },
+        {
+          "option_index": 4,
+          "option_content": "are 0"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 63,
+      "question_content": "Initial conditions are used for \\_\\_\\_\\_\\_\\_ problems.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "time-dependent problems"
+        },
+        {
+          "option_index": 2,
+          "option_content": "boundary value problems"
+        },
+        {
+          "option_index": 3,
+          "option_content": "control volume problems"
+        },
+        {
+          "option_index": 4,
+          "option_content": "finite difference problems"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 64,
+      "question_content": "Which of these is not a combination of Neumann and Dirichlet Boundary conditions?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Cauchy boundary conditions"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Wall boundary conditions"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Mixed boundary conditions"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Robin boundary conditions"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 65,
+      "question_content": "Which is not a type of boundary conditions in CFD?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Cyclic boundary conditions"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Symmetry boundary conditions"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Wall boundary conditions"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Nodal boundary conditions"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 66,
+      "question_content": "Usually, in the inlet boundary conditions \\_\\_\\_\\_\\_\\_ are known.",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "gradients of flow properties"
+        },
+        {
+          "option_index": 2,
+          "option_content": "diffusive fluxes of properties"
+        },
+        {
+          "option_index": 3,
+          "option_content": "convective fluxes of properties"
+        },
+        {
+          "option_index": 4,
+          "option_content": "flow properties"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 67,
+      "question_content": "Which of these is true for an impermeable wall?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$$\\vec{V} = 0$$ above the surface"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$$\\vec{V} = 0$$ at the surface"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$$\\vec{V} \\cdot \\vec{n} = 0$$ at the surface"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$$\\vec{V} \\cdot \\vec{n} = 0$$ above the surface"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 68,
+      "question_content": "For a symmetry boundary, which is correct?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$V_n \\ne 0$, $\\tau_{nn} = 0$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$V_n \\ne 0$, $\\tau_{nn} \\ne 0$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$V_n = 0$, $\\tau_{nn} \\ne 0$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$V_n = 0$, $\\tau_{nn} = 0$"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 69,
+      "question_content": "Consider the Laplace equation describing steady state heat conduction in a two dimensional rectangular domain. If the equation is discretized using finite difference approximations with uniform grid spacing in both directions, and if the resulting equations are properly arranged and written in the form of a matrix equation, then the non-zero coefficients in the coefficient matrix will (assume array of unknowns is a 1D array obtained by column major ordering of the 2D unknowns)",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "have a tridiagonal structure with three adjacent diagonals including the main diagonal."
+        },
+        {
+          "option_index": 2,
+          "option_content": "have a pentadiagonal structure with five adjacent diagonals including the main diagonal."
+        },
+        {
+          "option_index": 3,
+          "option_content": "have a pentadiagonal structure with three adjacent diagonals and two other diagonals separated by diagonals containing zeroes."
+        },
+        {
+          "option_index": 4,
+          "option_content": "be the sum of two tridiagonal matrices each containing three adjacent diagonals."
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 70,
+      "question_content": "If we expand $f(x_0 + 3\\Delta x)$ about the point $x_0$ in Taylor series, then the fourth term in the expansion is given by",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$\\tfrac{3}{2}\\tfrac{d^2 f}{dx^2}\\big|_{x_0}\\Delta x^2$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$\\tfrac{1}{2}\\tfrac{d^3 f}{dx^3}\\big|_{x_0}\\Delta x^3$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$\\tfrac{9}{2}\\tfrac{d^3 f}{dx^3}\\big|_{x_0}\\Delta x^3$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$\\tfrac{9}{2}\\tfrac{d^2 f}{dx^2}\\big|_{x_0}\\Delta x^2$"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 71,
+      "question_content": "$\\left.\\tfrac{d^3 f}{dx^3}\\right|_i = \\frac{-3 f_{i+4} + 14 f_{i+3} - 24 f_{i+2} + 18 f_{i+1} - 5 f_i}{2\\Delta x^3}$ is an approximation of what order of accuracy?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "1"
+        },
+        {
+          "option_index": 2,
+          "option_content": "2"
+        },
+        {
+          "option_index": 3,
+          "option_content": "3"
+        },
+        {
+          "option_index": 4,
+          "option_content": "4"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 72,
+      "question_content": "For which of the following von Neumann stability analysis can be used:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "non-linear problems with Dirichlet boundary conditions"
+        },
+        {
+          "option_index": 2,
+          "option_content": "linear problems with periodic boundary conditions"
+        },
+        {
+          "option_index": 3,
+          "option_content": "linear problems with Neumann boundary conditions"
+        },
+        {
+          "option_index": 4,
+          "option_content": "all of the above"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 73,
+      "question_content": "Which of the following describes the Beam-Warming method:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Explicit, 1st order accurate in time, 2nd order in space, unconditionally stable"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Explicit, 2nd order accurate in time, 2nd order in space, conditionally stable"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Implicit, 1st order accurate in time, 2nd order in space, unconditionally stable"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Implicit, 2nd order accurate in time, 2nd order in space, unconditionally stable"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 74,
+      "question_content": "The conserved variables that are solved for in MacCormack method are:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$\rho, u, v, w, h$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$\rho, \rho u, \rho v, \rho w, \rho {e_t}$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "ρ, u, v, w, i"
+        },
+        {
+          "option_index": 4,
+          "option_content": "ρ, u, v, w, T"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 75,
+      "question_content": "A staggered grid system is used",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "to overcome the stability problem"
+        },
+        {
+          "option_index": 2,
+          "option_content": "to enable treatment of flow domain of irregular shape"
+        },
+        {
+          "option_index": 3,
+          "option_content": "to simplify grid generation"
+        },
+        {
+          "option_index": 4,
+          "option_content": "to eliminate chequerboard oscillations in pressure"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 76,
+      "question_content": "For compressible, two‑dimensional flows, the minimum number of partial differential equations (PDEs) to be solved is",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "5"
+        },
+        {
+          "option_index": 2,
+          "option_content": "4"
+        },
+        {
+          "option_index": 3,
+          "option_content": "3"
+        },
+        {
+          "option_index": 4,
+          "option_content": "6"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 77,
+      "question_content": "The continuity equation for compressible flow can be written as",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$\\tfrac{\\partial u_m}{\\partial x_m} = 0$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$\\tfrac{\\partial u_i}{\\partial x_j} = 0$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$\\tfrac{D\\rho}{Dt} = 0$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "None of the above"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 78,
+      "question_content": "The steady‑state, 2‑D momentum balance in the y‑direction, neglecting gravity, can be written for constant property flow as",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$u\\partial u/\\partial x + v\\partial v/\\partial y = -\\tfrac{1}{\\rho}\\partial p/\\partial x + \\tfrac{\\mu}{\\rho}(\\partial^2 u/\\partial x^2 + \\partial^2 v/\\partial y^2)$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$u\\partial v/\\partial x + v\\partial v/\\partial y = -\\tfrac{1}{\\rho}\\partial p/\\partial y + \\tfrac{\\mu}{\\rho}(\\partial^2 v/\\partial x^2 + \\partial^2 v/\\partial y^2)$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$u\\partial v/\\partial x + v\\partial v/\\partial y = -\\tfrac{1}{\\rho}\\partial p/\\partial x + \\tfrac{\\mu}{\\rho}(\\partial^2 v/\\partial x^2 + \\partial^2 v/\\partial y^2)$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "None of the above"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 79,
+      "question_content": "Which of the following statements is INCORRECT about solution of the linear system of algebraic equations Ax = b with known coefficients:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "If Gaussian elimination works, then LU decomposition can also be used."
+        },
+        {
+          "option_index": 2,
+          "option_content": "If LU decomposition works, then Gaussian elimination can also be used."
+        },
+        {
+          "option_index": 3,
+          "option_content": "If Gauss‑Seidel works, then TDMA can also be used."
+        },
+        {
+          "option_index": 4,
+          "option_content": "If TDMA works, then Gauss‑Seidel can also be used."
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 80,
+      "question_content": "Under optimal condition, the number of arithmetic operations required for convergence using the SOR method varies with the number of equations, n, as",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$n^{5/4}$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$n^{3/2}$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$n^{7/4}$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$n^{1/2}$"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 81,
+      "question_content": "In which of the following methods is triangulation with least aspect ratio ensured:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Advancing front method"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Bowyer‑Watson algorithm"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Both of the above"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Neither of the above"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 82,
+      "question_content": "In which of the following methods is proper triangulation of concave surfaces ensured so that no area lying outside the computational domain is triangulated:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Advancing front method"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Bowyer‑Watson algorithm"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Both of the above"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Neither of the above"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 83,
+      "question_content": "Which of the following statements is true about the turbulence closure problem?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "It does not arise for fully developed turbulent flow between two parallel plates"
+        },
+        {
+          "option_index": 2,
+          "option_content": "It refers to the case of a mathematical problem in which there are too many equations and too few variables"
+        },
+        {
+          "option_index": 3,
+          "option_content": "It arises only when doing direct numerical simulation of turbulence"
+        },
+        {
+          "option_index": 4,
+          "option_content": "None of the above"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 84,
+      "question_content": "Which ranking is correct in terms of DECREASING number of floating point operations (flops), i.e., more to fewer no. of flops, for the solution of Ax = b on very fine grids:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Gauss‑Seidel, SIP, ADI"
+        },
+        {
+          "option_index": 2,
+          "option_content": "SIP, GS, multigrid"
+        },
+        {
+          "option_index": 3,
+          "option_content": "ADI, optimal successive over‑relaxation, multigrid"
+        },
+        {
+          "option_index": 4,
+          "option_content": "ADI, multigrid, optimal successive over‑relaxation"
+        }
+      ],
+      "correct_option_index": 3
+    },
+    {
+      "question_index": 85,
+      "question_content": "Which of the following statements is NOT true about the multi‑grid method of solving Ax = b:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "It uses several grids for the same computational domain"
+        },
+        {
+          "option_index": 2,
+          "option_content": "It solves the same equations on all the grids"
+        },
+        {
+          "option_index": 3,
+          "option_content": "It uses the same boundary conditions on all the grids"
+        },
+        {
+          "option_index": 4,
+          "option_content": "None of the above"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 86,
+      "question_content": "For the one‑dimensional wave equation, which of the following statements is correct about the FTCS scheme:",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "Consistent, unconditionally unstable"
+        },
+        {
+          "option_index": 2,
+          "option_content": "Inconsistent, unconditionally stable"
+        },
+        {
+          "option_index": 3,
+          "option_content": "Consistent, conditionally stable"
+        },
+        {
+          "option_index": 4,
+          "option_content": "Consistent, unconditionally stable"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 87,
+      "question_content": "The advection term in the momentum conservation equation in the i‑th direction for constant‑property Newtonian fluid flow can be written as",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "$u_j\\partial u_i/\\partial x_i$"
+        },
+        {
+          "option_index": 2,
+          "option_content": "$u_i\\partial u_j/\\partial x_j$"
+        },
+        {
+          "option_index": 3,
+          "option_content": "$u_i\\partial u_j/\\partial x_i$"
+        },
+        {
+          "option_index": 4,
+          "option_content": "$u_j\\partial u_i/\\partial x_j$"
+        }
+      ],
+      "correct_option_index": 4
+    },
+    {
+      "question_index": 88,
+      "question_content": "\\left.\\frac{d^3 f}{dx^3}\\right|_i \\approx \\frac{f_{i+2} - 2f_{i+1} + 2f_{i-1} - f_{i-2}}{2\\Delta x^3}$ is an approximation of what order of accuracy?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "1"
+        },
+        {
+          "option_index": 2,
+          "option_content": "2"
+        },
+        {
+          "option_index": 3,
+          "option_content": "3"
+        },
+        {
+          "option_index": 4,
+          "option_content": "4"
+        }
+      ],
+      "correct_option_index": 2
+    },
+    {
+      "question_index": 89,
+      "question_content": "\\left.\\frac{d^3 f}{dx^3}\\right|_{x_{i+1}} \\approx \\frac{f_{i+4} - 3f_{i+3} + 3f_{i+2} - f_{i+1}}{\\Delta x^3}$ is an approximation of what order of accuracy?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "1"
+        },
+        {
+          "option_index": 2,
+          "option_content": "2"
+        },
+        {
+          "option_index": 3,
+          "option_content": "3"
+        },
+        {
+          "option_index": 4,
+          "option_content": "4"
+        }
+      ],
+      "correct_option_index": 1
+    },
+    {
+      "question_index": 90,
+      "question_content": "\\left.\\frac{d^2 f}{dx^2}\\right|_{x_i} \\approx \\frac{f_{i+1} - 2f_i + f_{i-1}}{\\Delta x^2}$ is an approximation of what order of accuracy?",
+      "options": [
+        {
+          "option_index": 1,
+          "option_content": "1"
+        },
+        {
+          "option_index": 2,
+          "option_content": "2"
+        },
+        {
+          "option_index": 3,
+          "option_content": "3"
+        },
+        {
+          "option_index": 4,
+          "option_content": "4"
+        }
+      ],
+      "correct_option_index": 2
+    }
+  ]
+}

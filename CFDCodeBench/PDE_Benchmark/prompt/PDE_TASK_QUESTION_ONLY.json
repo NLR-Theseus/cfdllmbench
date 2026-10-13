@@ -1,0 +1,416 @@
+{
+  "1D_Burgers_Equation": {
+    "equation": "\\[\n  \\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} = \\nu \\frac{\\partial^2 u}{\\partial x^2}\n\\]\n\nwhere:\n- \\( u(x,t) \\) is the velocity field\n- \\( \\nu = 0.07 \\) is the viscosity coefficient\n- \\( x \\) is the spatial coordinate\n- \\( t \\) is time",
+    "boundary conditions": "Periodic boundary conditions:\n\\[\n  u(0) = u(2\\pi)\n\\]",
+    "initial conditions": "\\[\n  u = -\\frac{2\\nu}{\\phi} \\frac{\\partial \\phi}{\\partial x} + 4\n\\]\nwhere:\n\\[\n  \\phi = \\exp\\left(\\frac{-x^2}{4\\nu}\\right) + \\exp\\left(\\frac{-(x - 2\\pi)^2}{4\\nu}\\right)\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 2\\pi] \\), - Temporal domain: \\(t \\in [0, 0.14\\pi]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx values on a uniform grid over x in [0, 2π] that includes both end points.",
+    "resolution_variables": {
+      "nx": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "1D_Diffusion": {
+    "equation": "\\[\n  \\frac{\\partial u}{\\partial t} = \\nu \\frac{\\partial^2 u}{\\partial x^2}\n\\]\n\nwhere:\n- \\( u(x,t) \\) is the diffused quantity (e.g., temperature, concentration)\n- \\( \\nu = 0.3 \\) is the diffusion coefficient\n- \\( x \\) is the spatial coordinate\n- \\( t \\) is time",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u(0, t) = 1, \\quad u(2, t) = 1\n\\]",
+    "initial conditions": "\\[ u(x, 0) = \\begin{cases} 2, & \\text{if } 0.5 \\leq x \\leq 1 \\\\ 1, & \\text{elsewhere} \\end{cases} \\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 2] \\),  Temporal domain: \\(t \\in [0, 0.0333]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx values on a uniform grid over x in [0, 2] that includes both end points.",
+    "resolution_variables": {
+      "nx": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "1D_Euler_Shock_Tube": {
+    "equation": "\\[\n  \\frac{\\partial \\mathbf{U}}{\\partial t} + \\frac{\\partial \\mathbf{F}}{\\partial x} = 0\n\\]\n\nwhere:\n- \\( \\rho \\): Density  \n- \\( u \\): Velocity  \n- \\( p \\): Pressure  \n- \\( E = \\frac{p}{(\\gamma - 1)\\rho} + \\frac{u^2}{2} \\): Total energy per unit mass  \n- \\( \\gamma = 1.4 \\): Ratio of specific heats (for air)\n- \\( \\mathbf{U} = [\\rho, \\rho u, \\rho E]^T \\): Conservative variables\n- \\( \\mathbf{F} = [\\rho u, \\rho u^2 + p, u(\\rho E + p)]^T \\): Flux vector",
+    "boundary conditions": "Reflective (no-flux) boundary conditions at both ends of the tube.",
+    "initial conditions": "Shock tube initially divided at \\( x = 0 \\):\n- Left region (\\( x < 0 \\)):\n  - \\( \\rho_L = 1.0 \\)\n  - \\( u_L = 0.0 \\)\n  - \\( p_L = 1.0 \\)\n- Right region (\\( x \\geq 0 \\)):\n  - \\( \\rho_R = 0.125 \\)\n  - \\( u_R = 0.0 \\)\n  - \\( p_R = 0.1 \\)",
+    "domain": "- Spatial domain: \\( x \\in [-1, 1] \\), Temporal domain: \\(t \\in [0, 0.25]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "rho",
+      "u",
+      "E"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx cell-centred values on nx uniform cells covering x in [-1, 1].",
+    "resolution_variables": {
+      "nx": 2
+    },
+    "gauge_free": []
+  },
+  "1D_Linear_Convection": {
+    "equation": "\\[\n  \\frac{\\partial u}{\\partial t} + c \\frac{\\partial u}{\\partial x} = \\epsilon \\frac{\\partial^2 u}{\\partial x^2}\n\\]\n\nwhere:\n- \\( u(x,t) \\): wave amplitude\n- \\( c = 1 \\): convection speed\n- \\( \\epsilon = 5 \\times 10^{-4} \\): damping coefficient",
+    "boundary conditions": "Periodic boundary conditions:\n\\[\n  u(x_{start}) = u(x_{end})\n\\]",
+    "initial conditions": "\\[\n  u(x,0) = e^{-x^2}\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [-5, 5] \\), Temporal domain: \\(t \\in [0, 10]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx values on a uniform grid over x in [-5, 5] that includes both end points.",
+    "resolution_variables": {
+      "nx": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "1D_Nonlinear_Convection": {
+    "equation": "\\[\n  \\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} = 0\n\\]\n\nwhere:\n- \\( u(x,t) \\): wave amplitude\n- \\( x \\): spatial coordinate\n- \\( t \\): time",
+    "boundary conditions": "Periodic boundary conditions:\n\\[\n  u(0, t) = u(2\\pi, t)\n\\]",
+    "initial conditions": "\\[\n  u(x, 0) = \\sin(x) + 0.5 \\sin(0.5x)\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 2\\pi] \\), Temporal domain: \\(t \\in [0, 5]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx values on a uniform grid over x in [0, 2π] that includes both end points.",
+    "resolution_variables": {
+      "nx": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Burgers_Equation": {
+    "equation": "\\[\n\\begin{align*}\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} + v \\frac{\\partial u}{\\partial y} &= \\nu \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right) \\\\\n\\frac{\\partial v}{\\partial t} + u \\frac{\\partial v}{\\partial x} + v \\frac{\\partial v}{\\partial y} &= \\nu \\left( \\frac{\\partial^2 v}{\\partial x^2} + \\frac{\\partial^2 v}{\\partial y^2} \\right)\n\\end{align*}\n\\]\n\nwhere:\n- \\( u(x,y,t) \\), \\( v(x,y,t) \\): velocity components in x and y\n- \\( \\nu = 0.01 \\): kinematic viscosity",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u = 1, \\quad v = 1 \\text{ on all boundaries}\n\\]",
+    "initial conditions": "Set \\( u = 1 \\), \\( v = 1 \\) throughout the domain, except:\n\\[\n  u = v = 2 \\quad \\text{for } 0.5 \\leq x, y \\leq 1\n\\]",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 0.027]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "v"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Convection": {
+    "equation": "\\[\n\\begin{align*}\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} + v \\frac{\\partial u}{\\partial y} &= 0 \\\\\n\\frac{\\partial v}{\\partial t} + u \\frac{\\partial v}{\\partial x} + v \\frac{\\partial v}{\\partial y} &= 0\n\\end{align*}\n\\]\n\nwhere:\n- \\( u(x,y,t) \\), \\( v(x,y,t) \\): velocity components in x and y",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u = 1, \\quad v = 1 \\text{ on all boundaries}\n\\]",
+    "initial conditions": "Set \\( u = 1 \\), \\( v = 1 \\) throughout the domain, except:\n\\[\n  u = v = 2 \\quad \\text{for } 0.5 \\leq x, y \\leq 1\n\\]",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 0.32]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "v"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Diffusion": {
+    "equation": "\\[\n\\frac{\\partial u}{\\partial t} = \\nu \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right)\n\\]\n\nwhere:\n- \\( u(x,y,t) \\): diffused scalar field (e.g., temperature, concentration)\n- \\( \\nu = 0.05 \\): diffusion coefficient",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u = 1 \\quad \\text{on all boundaries}\n\\]",
+    "initial conditions": "Set \\( u = 2 \\) in region \\( 0.5 \\leq x, y \\leq 1 \\), \\( u = 1 \\) elsewhere",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 0.3777]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Inviscid_Burgers": {
+    "equation": "\\[\n\\begin{align*}\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} + v \\frac{\\partial u}{\\partial y} &= 0 \\\\\n\\frac{\\partial v}{\\partial t} + u \\frac{\\partial v}{\\partial x} + v \\frac{\\partial v}{\\partial y} &= 0\n\\end{align*}\n\\]\n\nwhere:\n- \\( u(x,y,t), v(x,y,t) \\): velocity components in the x and y directions",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u = 1, \\quad v = 1 \\text{ on all boundaries}\n\\]",
+    "initial conditions": "Set \\( u = v = 2 \\) for \\( 0.5 \\leq x \\leq 1 \\) and \\( 0.5 \\leq y \\leq 1 \\); else set \\( u = v = 1 \\)",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 0.40]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "v"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Laplace_Equation": {
+    "equation": "\\[\n\\frac{\\partial^2 p}{\\partial x^2} + \\frac{\\partial^2 p}{\\partial y^2} = 0\n\\]\n\nwhere:\n- \\( p(x,y) \\): scalar potential field (e.g., temperature, electric potential)",
+    "boundary conditions": "- Left boundary \\( (x = 0) \\): \\( p = 0 \\)\n- Right boundary \\( (x = 2) \\): \\( p = y \\)\n- Top and bottom boundaries \\( (y = 0, 1) \\): Neumann condition \\( \\partial p / \\partial y = 0 \\)",
+    "initial conditions": "Set \\( p = 0 \\) throughout the domain initially",
+    "domain": "- Spatial domain: \\( x \\in [0, 2], y \\in [0, 1] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x in [0, 2], y in [0, 1] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2
+    },
+    "gauge_free": []
+  },
+  "2D_Linear_Convection": {
+    "equation": "\\[\n\\frac{\\partial u}{\\partial t} + c \\frac{\\partial u}{\\partial x} + c \\frac{\\partial u}{\\partial y} = 0\n\\]\n\nwhere:\n- \\( u(x, y, t) \\): scalar quantity being transported\n- \\( c = 1\\): convection speed in both x and y directions",
+    "boundary conditions": "Dirichlet boundary conditions:\n\\[\n  u = 1 \\quad \\text{for } x = 0, 2 \\text{ and } y = 0, 2\n\\]",
+    "initial conditions": "Set \\( u = 2 \\) for \\( 0.5 \\leq x \\leq 1 \\) and \\( 0.5 \\leq y \\leq 1 \\); \\( u = 1 \\) elsewhere",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 0.50]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Navier_Stokes_Cavity": {
+    "equation": "\\[\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} + v \\frac{\\partial u}{\\partial y} = -\\frac{1}{\\rho} \\frac{\\partial p}{\\partial x} + \\nu \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right)\n\\]\n\\[\n\\frac{\\partial v}{\\partial t} + u \\frac{\\partial v}{\\partial x} + v \\frac{\\partial v}{\\partial y} = -\\frac{1}{\\rho} \\frac{\\partial p}{\\partial y} + \\nu \\left( \\frac{\\partial^2 v}{\\partial x^2} + \\frac{\\partial^2 v}{\\partial y^2} \\right)\n\\]\n\\[\n\\frac{\\partial^2 p}{\\partial x^2} + \\frac{\\partial^2 p}{\\partial y^2} = -\\rho \\left( \\frac{\\partial u}{\\partial x} \\frac{\\partial u}{\\partial x} + 2 \\frac{\\partial u}{\\partial y} \\frac{\\partial v}{\\partial x} + \\frac{\\partial v}{\\partial y} \\frac{\\partial v}{\\partial y} \\right)\n\\]\n\nwhere:\n- \\( u, v \\): velocity components in x and y directions\n- \\( p \\): pressure field\n- \\( \\rho = 1 \\): fluid density\n- \\( \\nu = 0.01 \\): kinematic viscosity",
+    "boundary conditions": "- Top boundary (lid-driven): \\( u = 1, v = 0 \\)\n- Other walls: no-slip (\\( u = 0, v = 0 \\))\n- Pressure:\n  - \\( \\frac{\\partial p}{\\partial y} = 0 \\) at \\( y = 0 \\)\n  - \\( p = 0 \\) at \\( y = 1 \\)\n  - \\( \\frac{\\partial p}{\\partial x} = 0 \\) at \\( x = 0, 1 \\)",
+    "initial conditions": "\\[\n  u = 0, \\quad v = 0, \\quad p = 0 \\text{ everywhere in the domain}\n\\]",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 1] \\), Temporal domain: \\(t \\in [0, 10.0]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "v",
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 1] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Navier_Stokes_Channel": {
+    "equation": "\\[\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} + v \\frac{\\partial u}{\\partial y} = -\\frac{1}{\\rho} \\frac{\\partial p}{\\partial x} + \\nu \\left( \\frac{\\partial^2 u}{\\partial x^2} + \\frac{\\partial^2 u}{\\partial y^2} \\right) + F\n\\]\n\\[\n\\frac{\\partial v}{\\partial t} + u \\frac{\\partial v}{\\partial x} + v \\frac{\\partial v}{\\partial y} = -\\frac{1}{\\rho} \\frac{\\partial p}{\\partial y} + \\nu \\left( \\frac{\\partial^2 v}{\\partial x^2} + \\frac{\\partial^2 v}{\\partial y^2} \\right)\n\\]\n\\[\n\\frac{\\partial^2 p}{\\partial x^2} + \\frac{\\partial^2 p}{\\partial y^2} = -\\rho \\left( \\frac{\\partial u}{\\partial x}^2 + 2 \\frac{\\partial u}{\\partial y} \\frac{\\partial v}{\\partial x} + \\frac{\\partial v}{\\partial y}^2 \\right)\n\\]\n\nwhere:\n- \\( u(x,y,t) \\), \\( v(x,y,t) \\): velocity components\n- \\( p(x,y,t) \\): pressure field\n- \\( \\rho = 1 \\): fluid density\n- \\( \\nu = 0.1 \\): kinematic viscosity\n- \\( F = 1 \\): external force in the x-direction",
+    "boundary conditions": "- Periodic boundary conditions in x-direction for \\( u, v, p \\)\n- No-slip boundary conditions in y-direction: \\( u = 0, v = 0 \\)\n- \\( \\frac{\\partial p}{\\partial y} = 0 \\) at \\( y = 0, 2 \\)",
+    "initial conditions": "\\[\n  u = 0, \\quad v = 0, \\quad p = 0 \\text{ everywhere in the domain}\n\\]",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 2] \\), Temporal domain: \\(t \\in [0, 5.0]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 2] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Poisson_Equation": {
+    "equation": "\\[\n\\frac{\\partial^2 p}{\\partial x^2} + \\frac{\\partial^2 p}{\\partial y^2} = b(x, y)\n\\]\n\nwhere:\n- \\( p(x, y) \\): scalar potential (e.g., pressure)\n- \\( b(x, y) \\): source term made of two Gaussian sources of width \\( \\sigma = 0.05 \\):\n\\[\n  b = 100\\, e^{-\\left[(x - L_x/4)^2 + (y - L_y/4)^2\\right] / (2\\sigma^2)} - 100\\, e^{-\\left[(x - 3L_x/4)^2 + (y - 3L_y/4)^2\\right] / (2\\sigma^2)}, \\quad L_x = 2,\\ L_y = 1\n\\]",
+    "boundary conditions": "- Dirichlet boundary conditions:\n  \\( p = 0 \\) at \\( x = 0, 2 \\) and \\( y = 0, 1 \\)",
+    "initial conditions": "\\[\n  p(x, y) = 0 \\text{ everywhere in the domain}\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 2], y \\in [0, 1] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x in [0, 2], y in [0, 1] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2
+    },
+    "gauge_free": []
+  },
+  "2D_Steady_Heat_Equation": {
+    "equation": "\\[\n\\frac{\\partial^2 T}{\\partial x^2} + \\frac{\\partial^2 T}{\\partial y^2} = 0\n\\]\n\nwhere:\n- \\( T(x, y) \\): temperature field over the domain",
+    "boundary conditions": "- Dirichlet boundary conditions applied on all boundaries of a rectangular domain (width = 5, height = 4):\n  - Left boundary (x = 0): \\( T = 10^\\circ C \\)\n  - Right boundary (x = 5): \\( T = 40^\\circ C \\)\n  - Top boundary (y = 4): \\( T = 0^\\circ C \\)\n  - Bottom boundary (y = 0): \\( T = 20^\\circ C \\)",
+    "initial conditions": "\\[\n  T(x, y) = 0 \\text{ everywhere except at the boundaries}\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 5], y \\in [0, 4] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "T"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x in [0, 5], y in [0, 4] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2
+    },
+    "gauge_free": []
+  },
+  "2D_Unsteady_Heat_Equation": {
+    "equation": "\\[\n\\frac{\\partial T}{\\partial t} - \\alpha \\left( \\frac{\\partial^2 T}{\\partial x^2} + \\frac{\\partial^2 T}{\\partial y^2} \\right) = q(x, y, t)\n\\]\n\nwhere:\n- \\( T(x, y, t) \\): temperature field over time\n- \\( \\alpha = 1 \\): thermal diffusivity\n- \\( q(x, y, t) = Q_0 \\exp\\left(-\\frac{x^2 + y^2}{2\\sigma^2} \\right) \\): source term, with \\( Q_0 = 200°C/s \\) and \\( \\sigma = 0.1 \\)",
+    "boundary conditions": "\\[ T(x, y, t) = 1 \\quad \\text{on all boundaries} \\]",
+    "initial conditions": "\\[ T(x, y, 0) = 1 + 200 \\cdot \\exp\\left(-\\frac{x^2 + y^2}{2 \\cdot 0.1^2}\\right) \\]",
+    "domain": "- Spatial domain: \\( x, y \\in [-1, 1] \\), Temporal domain: \\(t \\in [0, 3]\\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "T"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [-1, 1] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "Fully_Developed_Turbulent_Channel_Flow": {
+    "equation": "\\[\n\\text{Momentum equation:} \\\\\n\\left[ \\frac{d\\mu_{\\text{eff}}}{dy} \\frac{d}{dy} + \\mu_{\\text{eff}} \\frac{d^2}{dy^2} \\right] u = -1\n\\]\n\n\\[\n\\text{Cess turbulence model:} \\\\\n\\frac{\\mu_{\\text{eff}}}{\\mu} = \\frac{1}{2} \\left( 1 + \\frac{1}{9} \\kappa^2 Re_\\tau^2 (2y - y^2)^2 (3 - 4y + 2y^2)^2 \\left[ 1 - \\exp \\left( -\\frac{y^+}{A} \\right) \\right]^2 \\right)^{1/2} - \\frac{1}{2}\n\\]\n\nwhere:\n- \\( \\mu_{\\text{eff}} = \\mu + \\mu_t \\): effective viscosity\n- \\( \\mu = 1 / Re_\\tau \\): molecular viscosity from input\n- \\( \\kappa = 0.426 \\): von Kármán constant\n- \\( A = 25.4 \\): damping constant\n- \\( y^+ = y Re_\\tau \\)\n- \\( Re_\\tau = 395 \\): friction Reynolds number (input)\n- \\( \\rho = 1 \\); with this scaling the friction velocity is \\( u_\\tau = \\sqrt{\\tau_w/\\rho} = 1 \\), so \\( u \\) is already in wall units (\\( u^+ \\))",
+    "boundary conditions": "- Dirichlet boundary conditions for velocity:\n  - \\( u(0) = 0 \\)\n  - \\( u(2) = 0 \\) (no-slip at walls)",
+    "initial conditions": "- \\( u(y) = 0 \\) (initial guess)\n- \\( \\mu_t(y) = 0 \\) (zero eddy viscosity)\nIterate the momentum equation and the Cess eddy-viscosity model to convergence.",
+    "domain": "- Spatial domain: \\( y \\in [0, 2] \\) (channel height = 2)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of ny values on a uniform grid over y in [0, 2] that includes both end points.",
+    "resolution_variables": {
+      "ny": 2
+    },
+    "gauge_free": []
+  },
+  "Lid_Driven_Cavity": {
+    "equation": "\\[\n\\text{Momentum equation:} \\\\\n\\frac{\\partial \\mathbf{u}}{\\partial t} + (\\mathbf{u} \\cdot \\nabla)\\mathbf{u} = - \\frac{1}{\\rho} \\nabla p + \\nu \\nabla^2 \\mathbf{u} \\\\\n\\text{Incompressibility constraint:} \\\\\n\\nabla \\cdot \\mathbf{u} = 0 \\\\\n\\text{Pressure Poisson equation:} \\\\\n\\nabla^2 p = \\frac{\\rho}{\\Delta t} (\\nabla \\cdot \\mathbf{u}^*)\n\\]\n\nwhere:\n- \\( \\mathbf{u} = [u(x, y, t), v(x, y, t)] \\): velocity vector\n- \\( p(x, y, t) \\): pressure\n- \\( \\rho = 1.0 \\): fluid density\n- \\( \\nu = 0.1 \\): kinematic viscosity\n- \\( \\mathbf{u}^* \\): intermediate velocity (before pressure correction)",
+    "boundary conditions": "- Velocity boundary conditions:\n  - \\( u = 1 \\), \\( v = 0 \\) on the **top lid** (driven wall)\n  - \\( u = 0 \\), \\( v = 0 \\) on **all other walls** (no-slip)\n- Pressure boundary conditions:\n  - Homogeneous Neumann \\( \\partial p/\\partial n = 0 \\) on all walls\n  - Pressure is defined only up to a constant; it is compared after removing its mean",
+    "initial conditions": "\\[\n  u(x, y, 0) = 0, \\quad v(x, y, 0) = 0, \\quad p(x, y, 0) = 0\n\\]\n(velocity and pressure fields are initialized to zero)",
+    "domain": "- Spatial domain: \\( x, y \\in [0, 1] \\)\n- 2D square cavity, time-dependent flow\n - Time domain \\( t \\in [0, 0.5] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "v",
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (ny, nx) on a uniform grid over x, y in [0, 1] that includes the boundary points; the first index runs along y and the second along x.",
+    "resolution_variables": {
+      "nx": 2,
+      "ny": 2,
+      "nt": 4
+    },
+    "gauge_free": [
+      "p"
+    ]
+  },
+  "Flow_Past_Circular_Cylinder": {
+    "equation": "\\[\n\\text{Poisson equation (in polar coordinates):} \\\\\n\\nabla^2 \\psi = -\\omega \\\\\n\\text{Vorticity transport equation:} \\\\\n\\frac{\\partial \\omega}{\\partial t} + u_r \\frac{\\partial \\omega}{\\partial r} + \\frac{u_\\theta}{r} \\frac{\\partial \\omega}{\\partial \\theta} = \\nu \\nabla^2 \\omega\n\\]\n\nwhere:\n- \\( \\psi(r, \\theta, t) \\): streamfunction\n- \\( \\omega(r, \\theta, t) \\): vorticity\n- \\( u_r = \\frac{1}{r} \\frac{\\partial \\psi}{\\partial \\theta} \\), \\( u_\\theta = -\\frac{\\partial \\psi}{\\partial r} \\): velocity components in polar coordinates\n- \\( \\nu = 0.005 \\): kinematic viscosity, and \\(v_\\infty = 1\\)",
+    "boundary conditions": "- Inner boundary (cylinder surface): \\( \\psi = 20 \\), \\( \\omega = 2(\\psi_0 - \\psi_1)/\\Delta r^2 \\)\n- Outer boundary: \\( \\psi = v_\\infty \\cdot y + 20 \\), \\( \\omega = 0 \\)\n- Periodic boundary in \\( \\theta \\)-direction for both \\( \\psi \\) and \\( \\omega \\)",
+    "initial conditions": "\\[\n  \\psi(r, \\theta, 0) = 0, \\quad \\omega(r, \\theta, 0) = 0\n\\]\nThe boundary values above are applied from \\( t = 0 \\); the interior starts at rest.",
+    "domain": "- Spatial domain: \\( r \\in [0.5, 10] \\), \\( \\theta \\in [0, 2\\pi] \\)\n- 2D flow around a fixed circular cylinder using polar coordinates \n - Time domain: \\( t \\in [0, 10] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "psi",
+      "omega"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (nr, ntheta) on a uniform grid over r in [0.5, 10], θ in [0, 2π] that includes the boundary points; the first index runs along r and the second along θ.",
+    "resolution_variables": {
+      "nr": 2,
+      "ntheta": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "1D_KdV_Burgers_Equation": {
+    "equation": "\\[\n\\text{KdV-Burgers equation:} \\\\\n\\frac{\\partial u}{\\partial t} + u \\frac{\\partial u}{\\partial x} = a \\frac{\\partial^2 u}{\\partial x^2} + b \\frac{\\partial^3 u}{\\partial x^3}\n\\]\n\nwhere:\n- \\( u(x, t) \\): scalar field (e.g., velocity or wave amplitude)\n- \\( a = 1 \\times 10^{-4} \\): diffusion coefficient (Burgers term)\n- \\( b = 2 \\times 10^{-4} \\): dispersion coefficient (KdV term)",
+    "boundary conditions": "- Periodic boundary conditions in space: \\( u(0, t) = u(10, t) \\) for all \\( t \\)",
+    "initial conditions": "\\[\n  u(x, 0) = \\frac{1}{2n} \\log \\left( 1 + \\frac{\\cosh^2(n)}{\\cosh^2(n(x - 0.2L))} \\right), \\quad n = 20\n\\]\nThis defines a localized disturbance (soliton) centered near \\( x = 2.0 \\).",
+    "domain": "- Spatial domain: \\( x \\in [0, 10] \\)\n- Temporal domain: \\( t \\in [0, 10] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nx values on a uniform grid over x in [0, 10] that includes both end points.",
+    "resolution_variables": {
+      "nx": 2,
+      "nt": 4
+    },
+    "gauge_free": []
+  },
+  "2D_Rayleigh_Benard_Convection": {
+    "equation": "\\[\n\\text{Momentum equation:} \\\\\n\\frac{\\partial \\mathbf{u}}{\\partial t} + (\\mathbf{u} \\cdot \\nabla)\\mathbf{u} = -\\nabla p + \\nu \\nabla^2 \\mathbf{u} + b \\mathbf{e}_z \\\\\n\\text{Buoyancy (temperature) transport:} \\\\\n\\frac{\\partial b}{\\partial t} + \\mathbf{u} \\cdot \\nabla b = \\kappa \\nabla^2 b \\\\\n\\text{Incompressibility:} \\\\\n\\nabla \\cdot \\mathbf{u} = 0\n\\]\n\nwhere:\n- \\( \\mathbf{u}(x, z, t) = (u, w) \\): velocity field\n- \\( p(x, z, t) \\): pressure\n- \\( b(x, z, t) \\): buoyancy (temperature deviation)\n- \\( \\nu = (Ra/Pr)^{-1/2} \\): kinematic viscosity\n- \\( \\kappa = (Ra\\cdot Pr)^{-1/2} \\): thermal diffusivity\n- \\( Ra = 2 \\times 10^6 \\), \\( Pr = 1 \\): Rayleigh and Prandtl numbers, where \\(\\mathbf{e}_z\\) is the unit vector of Z direction.",
+    "boundary conditions": "- Top boundary \\( z = L_z \\): \\( \\mathbf{u} = 0 \\), \\( b = 0 \\)\n- Bottom boundary \\( z = 0 \\): \\( \\mathbf{u} = 0 \\), \\( b = L_z \\)\n- Horizontal boundaries: periodic for all variables",
+    "initial conditions": "\\[\n  \\mathbf{u}(x, z, 0) = 0, \\quad b(x, z, 0) = L_z - z + 10^{-3} \\sin(\\pi z / L_z) \\cos(\\pi x)\n\\]\nwith \\( L_z = 1 \\) (a small deterministic perturbation of the linear profile that triggers convection).",
+    "domain": "- Spatial domain: \\( x \\in [0, 4],\\ z \\in [0, 1] \\)\n- Temporal domain: \\( t \\in [0, 50] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "w",
+      "b",
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (nz, nx) on a uniform grid over x in [0, 4], z in [0, 1] that includes the boundary points; the first index runs along z and the second along x. Here u and w are the x- and z-velocity components.",
+    "resolution_variables": {
+      "nx": 2,
+      "nz": 2,
+      "nt": 4
+    },
+    "gauge_free": [
+      "p"
+    ]
+  },
+  "2D_Shear_Flow_With_Tracer": {
+    "equation": "\\[\n\\text{Momentum equation:} \\\\\n\\frac{\\partial \\mathbf{u}}{\\partial t} + (\\mathbf{u} \\cdot \\nabla)\\mathbf{u} = -\\nabla p + \\nu \\nabla^2 \\mathbf{u} \\\\\n\\text{Tracer transport equation:} \\\\\n\\frac{\\partial s}{\\partial t} + (\\mathbf{u} \\cdot \\nabla)s = D \\nabla^2 s \\\\\n\\text{Incompressibility constraint:} \\\\\n\\nabla \\cdot \\mathbf{u} = 0\n\\]\n\nwhere:\n- \\( \\mathbf{u}(x, z, t) = (u, w) \\): velocity field\n- \\( p(x, z, t) \\): pressure field\n- \\( s(x, z, t) \\): passive tracer field\n- \\( \\nu = 1 / (5 \\times 10^4) \\): kinematic viscosity (from Reynolds number)\n- \\( D = \\nu / 1 \\): tracer diffusivity (from Schmidt number)",
+    "boundary conditions": "- Periodic boundary conditions in both \\( x \\)- and \\( z \\)-directions for all variables",
+    "initial conditions": "\\[\n  u(x, z, 0) = \\frac{1}{2} \\left[ 1 + \\tanh\\left(\\frac{z - 0.5}{0.1}\\right) - \\tanh\\left(\\frac{z + 0.5}{0.1}\\right) \\right] \\\\\n  w(x, z, 0) = 0.1 \\sin(2\\pi x) \\left[ e^{-(z - 0.5)^2/0.01} + e^{-(z + 0.5)^2/0.01} \\right] \\\\\n  s(x, z, 0) = u(x, z, 0)\n\\]",
+    "domain": "- Spatial domain: \\( x \\in [0, 1],\\ z \\in [-1, 1] \\)\n- Temporal domain: \\( t \\in [0, 20] \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "u",
+      "w",
+      "s",
+      "p"
+    ],
+    "output": "Save each variable as a 2D NumPy array of shape (nz, nx) on a uniform grid over x in [0, 1], z in [-1, 1] that includes the boundary points; the first index runs along z and the second along x. Here u and w are the x- and z-velocity components.",
+    "resolution_variables": {
+      "nx": 2,
+      "nz": 2,
+      "nt": 4
+    },
+    "gauge_free": [
+      "p"
+    ]
+  },
+  "Pipe_Flow_Disk_EVP": {
+    "equation": "\\[\n\\text{Linearized incompressible Navier–Stokes equations (in cylindrical coordinates):} \\\\\n\\nabla \\cdot \\mathbf{u} + \\partial_z w = 0 \\\\\ns \\mathbf{u} + w_0 \\partial_z \\mathbf{u} + \\nabla p - \\frac{1}{Re}(\\nabla^2 \\mathbf{u} + \\partial_z^2 \\mathbf{u}) = 0 \\\\\ns w + w_0 \\partial_z w + \\mathbf{u} \\cdot \\nabla w_0 + \\partial_z p - \\frac{1}{Re}(\\nabla^2 w + \\partial_z^2 w) = 0\n\\]\n\nwhere:\n- \\( \\mathbf{u}(r, \\phi) \\): in-plane perturbation velocity\n- \\( w(r, \\phi) \\): axial velocity perturbation\n- \\( p(r, \\phi) \\): pressure perturbation\n- \\( s \\): eigenvalue representing temporal growth/decay rate\n- \\( w_0(r,z) = 1 - r^2 \\): laminar background flow\n- \\( Re = 10^4 \\): Reynolds number",
+    "boundary conditions": "- No-slip at the pipe wall \\( r = 1 \\):\n  - \\( \\mathbf{u}(r=1) = 0 \\)\n  - \\( w(r=1) = 0 \\)\n- Periodic in azimuthal \\( \\phi \\) and axial \\( z \\) directions (implicitly handled by Fourier expansion)",
+    "initial conditions": "As this is an eigenvalue problem (EVP), no initial conditions are needed. The system seeks eigenmodes and growth rates directly.\nFind the least-stable eigenmode (the eigenvalue \\( s \\) with the largest real part).",
+    "domain": "- Radial domain: \\( r \\in [0, 1] \\)\n- Azimuthal domain: \\( \\phi \\in [0, 2\\pi] \\)\n- Axial domain: \\( z \\in (-\\infty, \\infty) \\), represented by a fixed axial wave number \\( k_z = 1 \\); use azimuthal wave number \\( m = 5 \\)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "s"
+    ],
+    "output": "Save the growth rate, i.e. the real part of the least-stable eigenvalue s, as a NumPy scalar in s.npy.",
+    "resolution_variables": {
+      "nr": 2
+    },
+    "gauge_free": []
+  },
+  "Lane_Emden_Equation": {
+    "equation": "\\[\n\\text{Lane-Emden equation:} \\\\\n\\nabla^2 f + f^n = 0\n\\]\n\nwhere:\n- \\( f(r) \\): scalar field (e.g., dimensionless density or potential) defined in the radial direction\n- \\( n = 3.0 \\): polytropic index controlling nonlinearity",
+    "boundary conditions": "- Dirichlet boundary conditions:\n  - \\( f(r=1) = 0 \\) at the outer radius\n- Regularity condition at the center \\( r=0 \\) (implied by symmetry)\n- Seek the non-trivial solution (\\( f(0) > 0 \\))",
+    "initial conditions": "As this is a nonlinear boundary value problem, no explicit initial conditions are needed, but an initial guess is used:\n\\[\n  f_0(r) = R_0^{\\frac{2}{n-1}} (1 - r^2)^2, \\quad R_0 = 5\n\\]",
+    "domain": "- Radial domain: \\( r \\in [0, 1] \\)\n- Spherically symmetric problem over the unit ball (no angular dependence)",
+    "numerical method": "finite difference method",
+    "save_values": [
+      "f"
+    ],
+    "output": "Save each variable as a 1D NumPy array of nr values on a uniform grid over r in [0, 1] that includes both end points.",
+    "resolution_variables": {
+      "nr": 2
+    },
+    "gauge_free": []
+  }
+}

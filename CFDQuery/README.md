@@ -95,6 +95,8 @@ llm-cfd-evaluation/
 ```
 
 ## Dataset
+The latest (V2) dataset is included in this folder: [`CFDQuery.json`](CFDQuery.json).
+
 The dataset used in the paper can be downloaded from `https://www.kaggle.com/datasets/nithinsekhar/cfdquery/data`.
 - Download the file named 'CFDQuery.json' from the dataset to the same folder as llms.py
 

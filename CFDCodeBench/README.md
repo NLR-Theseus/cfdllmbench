@@ -110,6 +110,8 @@ Or directly edit the ```utils.py``` to insert your keys.
 ---
 
 ## Datasets
+The latest (V2) task definitions and prompts are included in this repository: [`PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json`](PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json) and [`PDE_Benchmark/prompt/prompts.json`](PDE_Benchmark/prompt/prompts.json).
+
 The datasets used in the paper can be downloaded from `https://www.kaggle.com/datasets/nithinsekhar/cfdcodebench/data`. 
 From the folder named CFDCodeBench in the dataset, copy the folders solution and prompt to the PDE_Benchmark folder.
 
