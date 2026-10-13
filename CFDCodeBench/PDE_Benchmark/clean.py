@@ -17,7 +17,9 @@ def make_clean(root_dir):
         "compare_images",
         "table",
         "image",
-        "convergent"
+        "convergent",
+        "runs",
+        "eval"
     ]
 
     print("🧹 Cleaning generated folders...\n")
@@ -56,4 +58,4 @@ def make_clean(root_dir):
     print("\n✨ Done. Project workspace is clean.")
 
 
-make_clean("/opt/CFD-Benchmark/PDE_Benchmark")
+make_clean(os.path.dirname(os.path.abspath(__file__)))  # PDE_Benchmark root

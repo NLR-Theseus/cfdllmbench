@@ -110,10 +110,13 @@ Or directly edit the ```utils.py``` to insert your keys.
 ---
 
 ## Datasets
-The latest (V2) task definitions and prompts are included in this repository: [`PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json`](PDE_Benchmark/prompt/PDE_TASK_QUESTION_ONLY.json) and [`PDE_Benchmark/prompt/prompts.json`](PDE_Benchmark/prompt/prompts.json).
+The CFDLLMBench V2 task definitions (`prompt/`), reference solvers (`solution/`) and reference answers
+(`results/solution/`) are included in the `PDE_Benchmark` folder. The datasets used in the original paper can be
+downloaded from `https://www.kaggle.com/datasets/nithinsekhar/cfdcodebench/data`.
 
-The datasets used in the paper can be downloaded from `https://www.kaggle.com/datasets/nithinsekhar/cfdcodebench/data`. 
-From the folder named CFDCodeBench in the dataset, copy the folders solution and prompt to the PDE_Benchmark folder.
+Five reference solvers (`1D_KdV_Burgers_Equation`, `2D_Rayleigh_Benard_Convection`, `2D_Shear_Flow_With_Tracer`,
+`Pipe_Flow_Disk_EVP`, `Lane_Emden_Equation`) use [Dedalus](https://dedalus-project.org); it is only needed to
+regenerate their reference answers (`conda install -c conda-forge dedalus`).
 
 ## 💻 Run the Benchmark
 To run the benchmark pipeline for all prompts and models:
@@ -127,12 +130,15 @@ This script performs the following steps:
 
 * **Call LLM to Generate Code**  
   Uses the selected Large Language Model (LLM) (e.g., GPT-4o, Gemini, Claude, etc.) to generate solver code for the given PDE problem.
+  Generation is one shot by default (`LLMCodeGenerator(..., reviewer=False)`, as in CFDLLMBench V2): one model call per
+  task, without execution feedback. `reviewer=True` allows up to 5 attempts, each with the previous execution error.
 
 * **Save Generated Code**  
   Saves the generated Python solver scripts into the `solver/` directory.
 
 * **Execute and Evaluate**  
-  Runs each solver, compares the results with the ground-truth reference in the `solution/` directory.
+  Runs each solver in its own folder under `runs/` and scores it against `results/solution/`
+  (set `GENERATE` / `EVALUATE` at the top of `train_plain_prompts.py`).
 
 * **Log Results**  
   * Performance metrics and runtime are logged into the `report/` folder.  
@@ -141,6 +147,26 @@ This script performs the following steps:
   * Final comparison results tables are stored in the `table/` directory.
 ---
 ## 📊 Output and Evaluation
+Each generated script must write one `<variable>.npy` per entry of `save_values` in
+`prompt/PDE_TASK_QUESTION_ONLY.json`, and declare its resolution as integer variables (e.g. `nx`, `ny`, `nt`).
+The evaluation (`Evaluator` in `utils.py`) reports three metrics and the Success Rate per model:
+
+* **Execution** — the script exits without error within the time limit.
+* **NMSE** — `sum((ref - pred)^2) / sum(ref^2)` per variable after interpolating onto the reference grid
+  (pressure-like fields listed in `gauge_free` are compared after removing their mean); a missing or misnamed
+  variable counts as a failure. Scored 1 if NMSE < 0.1, 0.5 if NMSE < 0.3, else 0.
+* **Convergence** — the script is re-run with its resolution variables refined (factors in
+  `resolution_variables`, e.g. `nx` x2, `nt` x4); it passes if the refined run executes and NMSE < 0.1.
+* **Success Rate** — the fraction of tasks that execute, score NMSE 1 and are convergent.
+
+The time limits are 600 s for a run and 3600 s for the refined run; a script that exceeds them counts as failed.
+Each task's result is saved as soon as it is scored (`eval/<model>/<prompt>/task_rows.jsonl`), so an interrupted
+evaluation resumes where it stopped; `Evaluator(..., parallel=N)` scores N tasks at a time.
+
+Per-task results are written to `eval/<model>/<prompt>/task_results.csv`, per-model summaries to
+`eval/<model>/<prompt>/summary.csv`, and all models to `eval/summary_all_models.csv`.
+
+Outputs of the original (v1) pipeline:
 * Execution results (error logs, pass/fail): saved in `report/`
 
 * Generated solvers: `solver/`

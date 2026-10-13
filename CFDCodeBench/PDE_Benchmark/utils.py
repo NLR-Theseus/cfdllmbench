@@ -17,6 +17,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import ast
 import shutil
+import threading
+from concurrent.futures import ThreadPoolExecutor
 # from google import genai
 # from google.genai import types
 
@@ -31,28 +33,31 @@ def generate_prompt(data):
         "**Numerical Method:**\n" + data.get("numerical method", "") + "\n"
     ]
 
-    # Check for 'save_values' and add to task description
-    save_values = data.get("save_values", [])
-    save_values_str = ", ".join(save_values) if save_values else "the relevant variables specified for the problem"
+    # Variables to save. v1 task files used the key "save values" (with a space), which this function never
+    # read, so no prompt listed them; accept both spellings.
+    save_values = data.get("save_values", data.get("save values", []))
+    if isinstance(save_values, str):
+        save_values = [save_values]
+    files_str = ", ".join(f"`{v}.npy`" for v in save_values)
+    res_vars = list(data.get("resolution_variables", {}))
+    res_str = ", ".join(f"`{v}`" for v in res_vars)
+    time_step_rule = (" Compute the time step as dt = T_final / nt so that the final time is reached exactly."
+                      if "nt" in res_vars else "")
     # Always end with task specification for the code
     parts.append(
         "### Task:\n"
         "- Write Python code to numerically solve the given CFD problem. Choose an appropriate numerical method based "
         "on the problem characteristics.\n"
-        "- If the problem is **unsteady**, only compute and save the **solution at the final time step**.\n"
-        "- For each specified variable, save the final solution as a separate `.npy` file using NumPy:\n"
-        "  - For **1D problems**, save each variable as a 1D NumPy array.\n"
-        "  - For **2D problems**, save each variable as a 2D NumPy array.\n"
-        "- The `.npy` files should contain only the final solution field (not intermediate steps) for each of the "
-        "specified variables.\n"
-        "- **Save the following variables** at the final time step:\n"
-        + save_values_str + "\n"
-                            "(Each variable should be saved separately in its own `.npy` file, using the same name as "
-                            "provided in `save_values`).\n"
-                            "- Ensure the generated code properly handles the solution for each specified variable "
-                            "and saves it correctly in `.npy` format.\n"
-                            "- **Return only the complete, runnable Python code** that implements the above tasks, "
-                            "ensuring no extra explanations or information is included."
+        "- If the problem is **unsteady**, only compute and save the **solution at the final time**.\n"
+        f"- **Save the following variables**, each in its own file in the current working directory: {files_str}.\n"
+        f"- {data.get('output', '')}\n"
+        + (f"- Define the resolution as integer variables {res_str}, each assigned a literal value at the top level of "
+           if len(res_vars) > 1 else
+           f"- Define the resolution as an integer variable {res_str} assigned a literal value at the top level of ")
+        + f"the script (for example `{res_vars[0] if res_vars else 'nx'} = 101`).{time_step_rule} The benchmark re-runs "
+        "the script with these values refined to test convergence.\n"
+        "- **Return only the complete, runnable Python code** that implements the above tasks, "
+        "ensuring no extra explanations or information is included."
     )
 
     return "\n".join(parts)
@@ -127,7 +132,8 @@ class PromptGenerator:
 # === Function to Execute Python Script and Capture Errors and Warnings ===
 def execute_python_script(filepath, timeout=60):
     try:
-        result = subprocess.run(["python3", filepath], capture_output=True, text=True, timeout=timeout)
+        result = subprocess.run(["python3", filepath], capture_output=True, text=True, timeout=timeout,
+                                cwd=os.path.dirname(os.path.abspath(filepath)))
         stderr_output = result.stderr.strip()
 
         if result.returncode == 0:
@@ -168,7 +174,7 @@ def build_conversation(original_prompt, llm_model):
 
     # Prompt augmentation
     user_prompt = (original_prompt +
-                   "If it is an unsteady problem, only save the solution at the final time step "
+                   "\nIf it is an unsteady problem, only save the solution at the final time step. "
                    "If the problem is 1D, the saved array should be 1D. "
                    "If the problem is 2D, the saved array should be 2D.")
     # Determine system or user role for the instruction
@@ -417,6 +423,9 @@ def generate_code(llm_model, task_name, prompt, client, temperature, bedrock_run
             # Extract Python code using regex, save the full model response and extracted python code
             script_path = save_model_outputs(task_name, output_folder, model_response)
 
+            if retries + 1 >= max_retries:
+                return  # one shot (or last attempt): no execution feedback; the Evaluator runs the code
+
             # Execute and check for errors
             if execute_check_errors(llm_model, script_path, task_name, conversation_history):
                 return  # Exit function if no errors
@@ -463,7 +472,9 @@ def api_key_configuration(llm_model):
 
 
 class LLMCodeGenerator:
-    def __init__(self, llm_model, prompt_json, temperature=0.0, reviewer=True):
+    def __init__(self, llm_model, prompt_json, temperature=0.0, reviewer=False):
+        # reviewer=False (default): one shot per task, as in CFDLLMBench V2. reviewer=True: up to 5 attempts, each
+        # with the execution error of the previous one as feedback.
         self.llm_model = llm_model
         self.prompt_json = prompt_json
         self.temperature = temperature
@@ -1042,158 +1053,218 @@ def call_save_image_different_dir(ground_truth_dir, prediction_dir, save_dir_gt,
 
     print(f"\n🎯 Plotting complete. Images saved to: {save_dir_gt} and {save_dir_pred}")
 
-def scale_nx_ny_nt(folder_path, k):
-    print("Scanning folder:", os.path.abspath(folder_path))
 
-    for root, dirs, files in os.walk(folder_path):
-        for filename in files:
-            if filename.endswith(".py"):
-                file_path = os.path.join(root, filename)
-                print(f"Processing {file_path}")
+# ======================================================================================================
+# Evaluation (v2): execution, NMSE against the reference, and a convergence test.
+#
+# Each generated script is run in its own empty working directory and must write one `<variable>.npy`
+# per entry of `save_values` (see prompt/PDE_TASK_QUESTION_ONLY.json). Missing or misnamed variables
+# count as failures instead of being skipped. For the convergence test the integer resolution
+# variables named in `resolution_variables` are multiplied by the listed factors and the script is run
+# again; it passes when the refined run executes and still matches the reference (NMSE < 0.1).
+# ======================================================================================================
+import sys
 
-                with open(file_path, 'r') as f:
-                    code = f.read()
-
-                updated = False  # flag to indicate whether we changed anything
-
-                # Update nx
-                nx_match = re.search(r'nx\s*=\s*(\d+)', code)
-                if nx_match:
-                    nx_old = int(nx_match.group(1))
-                    nx_new = nx_old * k
-                    code = re.sub(r'nx\s*=\s*\d+', f'nx = {nx_new}', code)
-                    print(f"  [Updated] nx: {nx_old} → {nx_new}")
-                    updated = True
-
-                # Update ny
-                ny_match = re.search(r'ny\s*=\s*(\d+)', code)
-                if ny_match:
-                    ny_old = int(ny_match.group(1))
-                    ny_new = ny_old * k
-                    code = re.sub(r'ny\s*=\s*\d+', f'ny = {ny_new}', code)
-                    print(f"  [Updated] ny: {ny_old} → {ny_new}")
-                    updated = True
-
-                # Update nt
-                nt_match = re.search(r'nt\s*=\s*(\d+)', code)
-                if nt_match:
-                    nt_old = int(nt_match.group(1))
-                    nt_new = nt_old * k
-                    code = re.sub(r'nt\s*=\s*\d+', f'nt = {nt_new}', code)
-                    print(f"  [Updated] nt: {nt_old} → {nt_new}")
-                    updated = True
-
-                # Write back only if we made changes
-                if updated:
-                    with open(file_path, 'w') as f:
-                        f.write(code)
+NMSE_PASS = 0.1          # NMSE below this scores 1
+NMSE_PARTIAL = 0.3       # NMSE below this scores 0.5 (same thresholds as FoamBench)
 
 
-class SolverPostProcessor:
-    def __init__(self, llm_model, prompt_json):
+def load_tasks(root_dir):
+    with open(os.path.join(root_dir, "prompt", "PDE_TASK_QUESTION_ONLY.json")) as f:
+        tasks = json.load(f)
+    for t in tasks.values():
+        sv = t.get("save_values", t.get("save values", []))
+        t["save_values"] = [sv] if isinstance(sv, str) else list(sv)
+        t.setdefault("resolution_variables", {})
+        t.setdefault("gauge_free", [])
+    return tasks
+
+
+def nmse_to_score(value):
+    if value < NMSE_PASS:
+        return 1.0
+    if value < NMSE_PARTIAL:
+        return 0.5
+    return 0.0
+
+
+def run_in_dir(code, workdir, script_name, timeout):
+    """Write `code` into an empty `workdir`, run it there, and report what happened."""
+    shutil.rmtree(workdir, ignore_errors=True)
+    os.makedirs(workdir)
+    path = os.path.join(workdir, script_name)
+    with open(path, "w") as f:
+        f.write(code)
+    start = datetime.now()
+    try:
+        r = subprocess.run([sys.executable, script_name], cwd=workdir, capture_output=True, text=True,
+                           timeout=timeout, env={**os.environ, "MPLBACKEND": "Agg"})
+        status = {"exit_code": r.returncode, "timed_out": False, "stderr_tail": r.stderr.strip()[-500:]}
+    except subprocess.TimeoutExpired:
+        status = {"exit_code": None, "timed_out": True, "stderr_tail": f"timeout after {timeout} s"}
+    status["seconds"] = round((datetime.now() - start).total_seconds(), 2)
+    status["executed"] = status["exit_code"] == 0
+    return status
+
+
+def collect_outputs(workdir, save_values):
+    """Find `<var>.npy` for each expected variable (top level first, then any sub-folder)."""
+    found = {}
+    for var in save_values:
+        hits = [os.path.join(workdir, f"{var}.npy")]
+        hits += [os.path.join(r, f"{var}.npy") for r, _, files in os.walk(workdir) if f"{var}.npy" in files]
+        path = next((h for h in hits if os.path.isfile(h)), None)
+        try:
+            found[var] = np.load(path, allow_pickle=False) if path else None
+        except Exception:
+            found[var] = None
+    return found
+
+
+def compare_variable(gt, pred, gauge_free=False):
+    """Return (nmse, note). NMSE = sum((gt - pred)^2) / sum(gt^2), after aligning pred to the gt grid."""
+    if pred is None:
+        return np.inf, "missing"
+    note = ""
+    gt = np.asarray(gt, dtype=float).squeeze()
+    pred = np.asarray(pred)
+    if np.iscomplexobj(pred):
+        pred = pred.real
+    pred = pred.astype(float).squeeze()
+    if not np.all(np.isfinite(pred)):
+        return np.inf, "non-finite values"
+    if gt.ndim == 0:
+        if pred.size != 1:
+            return np.inf, f"expected a scalar, got shape {pred.shape}"
+        pred = pred.reshape(())
+    elif pred.ndim != gt.ndim:
+        return np.inf, f"expected {gt.ndim}D, got shape {pred.shape}"
+    elif pred.shape != gt.shape:
+        # both are uniform grids that include the end points; zoom maps end point to end point
+        pred = zoom(pred, np.array(gt.shape) / np.array(pred.shape), order=1)
+        note = "interpolated"
+    if gauge_free:
+        gt, pred = gt - gt.mean(), pred - pred.mean()
+    denom = float(np.sum(gt ** 2))
+    if denom == 0.0:
+        return np.inf, "reference is identically zero"
+    return float(np.sum((gt - pred) ** 2)) / denom, note
+
+
+def score_outputs(gt_dir, task_name, meta, outputs):
+    per_var = {}
+    for var in meta["save_values"]:
+        gt = np.load(os.path.join(gt_dir, f"{var}_{task_name}.npy"))
+        per_var[var] = compare_variable(gt, outputs.get(var), var in meta["gauge_free"])
+    values = [v for v, _ in per_var.values()]
+    task_nmse = float(np.mean(values)) if values else np.inf
+    return per_var, task_nmse
+
+
+def refine_resolution(code, factors):
+    """Multiply top-level integer assignments such as `nx = 101` by the given factors."""
+    changed = {}
+    for name, factor in factors.items():
+        pattern = re.compile(rf"^({re.escape(name)}\s*=\s*)(\d+)(\s*(#.*)?)$", re.M)
+        m = pattern.search(code)
+        if m:
+            new_value = int(m.group(2)) * factor
+            code = code[:m.start()] + f"{m.group(1)}{new_value}{m.group(3)}" + code[m.end():]
+            changed[name] = (int(m.group(2)), new_value)
+    return code, changed
+
+
+class Evaluator:
+    """Execution, NMSE and convergence for every task generated by one model."""
+
+    def __init__(self, llm_model, prompt_json, timeout=600, refined_timeout=3600, root_dir=None, parallel=1,
+                 resume=True):
+        self.parallel = max(1, int(parallel))  # tasks evaluated at the same time (each in its own run folder)
+        self.resume = resume  # keep tasks already scored in eval/<model>/<prompt>/task_rows.jsonl
         self.llm_model = llm_model
-        self.prompt_json = prompt_json
-        self.timestamp = datetime.now().strftime("%H-%M-%S-%f")
-        # PDE_Benchmark root
-        self.root_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'PDE_Benchmark')
         self.prompt_name = os.path.splitext(prompt_json)[0]
-        self.generated_solvers_dir = os.path.join(self.root_dir, f"solver/{llm_model}/{self.prompt_name}")
-        self.generated_solvers_save_dir = os.path.join(self.root_dir, "report")
-        self.log_file = os.path.join(self.generated_solvers_save_dir,
-                                     f"execution_results_{llm_model}_{self.prompt_name}_{self.timestamp}.log")
-        self.save_dir = os.path.join(self.root_dir, f'results/prediction/{llm_model}/{self.prompt_name}')
-        self.ground_truth_dir = os.path.join(self.root_dir, 'results/solution')
-        self.prediction_dir = os.path.join(self.root_dir, f'results/prediction/{llm_model}/{self.prompt_name}')
-        self.compare_results_log_file = os.path.join(self.root_dir,
-                                                     f'compare/comparison_results_{llm_model}_{self.prompt_name}.log')
-        self.save_dir_gt = os.path.join(self.root_dir, f'compare_images/ground_truth/{llm_model}/{self.prompt_name}')
-        self.save_dir_pred = os.path.join(self.root_dir, f'compare_images/prediction/{llm_model}/{self.prompt_name}')
-        self.save_csv_path = os.path.join(self.root_dir, f'compare_images/table/{llm_model}/{self.prompt_name}')
-        self.TABLE_FOLDER = os.path.join(self.root_dir, 'table')
-        self.IMAGE_FOLDER = os.path.join(self.root_dir, 'image')
-        self.COMPARE_IMAGE_FOLDER = os.path.join(self.root_dir, 'compare_images')
-        self.SOLVER_FOLDER = os.path.join(self.root_dir, 'solver')
-        self.save_table_path = os.path.join(self.root_dir,
-                                            f'table/{llm_model}_{self.prompt_name}_extracted_results_table_{self.timestamp}.csv')
-        self.save_image_dir = os.path.join(self.root_dir, f'image/{llm_model}/{self.prompt_name}')
+        self.root_dir = root_dir or os.path.dirname(os.path.abspath(__file__))
+        self.tasks = load_tasks(self.root_dir)
+        self.solver_dir = os.path.join(self.root_dir, "solver", llm_model, self.prompt_name)
+        self.gt_dir = os.path.join(self.root_dir, "results", "solution")
+        self.run_dir = os.path.join(self.root_dir, "runs", llm_model, self.prompt_name)
+        self.out_dir = os.path.join(self.root_dir, "eval", llm_model, self.prompt_name)
+        self.timeout, self.refined_timeout = timeout, refined_timeout
 
-        os.makedirs(self.TABLE_FOLDER, exist_ok=True)
-        os.makedirs(self.IMAGE_FOLDER, exist_ok=True)
-        os.makedirs(self.COMPARE_IMAGE_FOLDER, exist_ok=True)
-        os.makedirs(self.SOLVER_FOLDER, exist_ok=True)
+    def evaluate_task(self, task_name, meta):
+        row = {"task": task_name}
+        script = os.path.join(self.solver_dir, f"{task_name}.py")
+        if not os.path.isfile(script):
+            row.update(executed=False, note="no generated script", nmse=np.inf, nmse_score=0.0,
+                       converged=False, refined_nmse=np.inf)
+            return row
+        code = open(script).read()
 
-        self.status_counts = {"pass": 0, "fail": 0}
-        self.CONVERGENT_FOLDER = os.path.join(self.root_dir, 'convergent')
-        os.makedirs(self.CONVERGENT_FOLDER, exist_ok=True)
+        base_dir = os.path.join(self.run_dir, task_name, "base")
+        status = run_in_dir(code, base_dir, f"{task_name}.py", self.timeout)
+        outputs = collect_outputs(base_dir, meta["save_values"]) if status["executed"] else {}
+        per_var, task_nmse = score_outputs(self.gt_dir, task_name, meta, outputs)
+        row.update(executed=status["executed"], seconds=status["seconds"], timed_out=status["timed_out"],
+                   nmse=task_nmse, nmse_score=nmse_to_score(task_nmse))
+        for var, (value, note) in per_var.items():
+            row[f"nmse_{var}"] = value
+            if note:
+                row[f"note_{var}"] = note
+        if not status["executed"]:
+            row["error"] = status["stderr_tail"]
 
-
-    def run_all(self, step1=True, step2=True, step3=True, step4=True):
-        if step1:
-            # STEP 1:
-            # post process to change the .npy save path to specific path
-            call_post_process(self.generated_solvers_dir, self.save_dir)
-        if step2:
-            # STEP 2:
-            # execute LLM generated python code and save the results to log file
-            call_execute_solver(self.generated_solvers_dir, self.log_file, self.status_counts)
-        if step3:
-            # STEP 3:
-            # compute the numerical errors (MSE, MAE, RMSE, CosineSimilarity, R2) for shape mismatch / match array
-            call_compare_output_mismatch(self.ground_truth_dir, self.prediction_dir, self.compare_results_log_file)
-            # transfer the numerical errors to tables
-            call_create_table(self.compare_results_log_file, self.save_table_path)
-        if step4:
-            # STEP 4:
-            # plot and save the images of gt and pred in different folder
-            call_save_image_different_dir(self.ground_truth_dir, self.prediction_dir, self.save_dir_gt,
-                                          self.save_dir_pred)
-            # compare the images for mismatch shape, change the image to gray image, note the MSE is for pixel not
-            # the same with MSE of original images, it works like human eyes (this function is optional)
-            call_compare_image_mismatch(self.save_dir_gt, self.save_dir_pred, self.save_csv_path)
-            # save the gt and pred images in the same figure, each is sub-figure, this used for human view the images
-            # this function is optional
-            call_save_image_same_dir(self.save_image_dir, self.ground_truth_dir, self.prediction_dir)
-
-
-class ConvergentTest(SolverPostProcessor):
-    def __init__(self, llm_model, prompt_json):
-        super().__init__(llm_model, prompt_json)
-
-        # Override relevant paths to use the convergent folder
-        self.generated_solvers_dir = os.path.join(self.root_dir, f"convergent/{llm_model}/{self.prompt_name}")  # instead of solver/{model}/{prompt}
-        self.prediction_dir = os.path.join(self.root_dir, f'results/prediction_convergent/{llm_model}/{self.prompt_name}')
-        self.save_dir = self.prediction_dir  # where .npy results are saved
-
-        self.log_file = os.path.join(self.generated_solvers_save_dir,
-                                     f"execution_results_convergent_{llm_model}_{self.prompt_name}_{self.timestamp}.log")
-
-        self.compare_results_log_file = os.path.join(self.root_dir,
-                                                     f'compare/comparison_results_convergent_{llm_model}_{self.prompt_name}.log')
-
-        self.save_dir_gt = os.path.join(self.root_dir, f'compare_images/ground_truth_convergent/{llm_model}/{self.prompt_name}')
-        self.save_dir_pred = os.path.join(self.root_dir, f'compare_images/prediction_convergent/{llm_model}/{self.prompt_name}')
-        self.save_csv_path = os.path.join(self.root_dir, f'compare_images/table_convergent/{llm_model}/{self.prompt_name}')
-
-        self.save_table_path = os.path.join(self.root_dir,
-                                            f'table/convergent_{llm_model}_{self.prompt_name}_extracted_results_table_{self.timestamp}.csv')
-        self.save_image_dir = os.path.join(self.root_dir, f'image/convergent/{llm_model}/{self.prompt_name}')
-
-        # Make sure any new directories are created
-        os.makedirs(self.prediction_dir, exist_ok=True)
-        os.makedirs(self.save_dir_gt, exist_ok=True)
-        os.makedirs(self.save_dir_pred, exist_ok=True)
-        os.makedirs(os.path.dirname(self.save_csv_path), exist_ok=True)
-        os.makedirs(os.path.dirname(self.save_table_path), exist_ok=True)
-        os.makedirs(self.save_image_dir, exist_ok=True)
+        refined_code, changed = refine_resolution(code, meta["resolution_variables"])
+        row["refined_vars"] = ", ".join(f"{k} {a}->{b}" for k, (a, b) in changed.items())
+        if not changed:
+            row.update(converged=False, refined_nmse=np.inf, refined_note="no resolution variables found")
+            return row
+        ref_dir = os.path.join(self.run_dir, task_name, "refined")
+        ref_status = run_in_dir(refined_code, ref_dir, f"{task_name}.py", self.refined_timeout)
+        ref_outputs = collect_outputs(ref_dir, meta["save_values"]) if ref_status["executed"] else {}
+        _, ref_nmse = score_outputs(self.gt_dir, task_name, meta, ref_outputs)
+        row.update(refined_executed=ref_status["executed"], refined_seconds=ref_status["seconds"],
+                   refined_nmse=ref_nmse, converged=bool(ref_status["executed"] and ref_nmse < NMSE_PASS))
+        return row
 
     def run(self):
-        # Post-processing for convergent test
-        shutil.copytree(self.SOLVER_FOLDER, self.CONVERGENT_FOLDER, dirs_exist_ok=True)
-        scale_nx_ny_nt(self.CONVERGENT_FOLDER, 4)
-        call_post_process(self.generated_solvers_dir, self.save_dir)
-        call_execute_solver(self.generated_solvers_dir, self.log_file, self.status_counts)
-        call_compare_output_mismatch(self.ground_truth_dir, self.prediction_dir, self.compare_results_log_file)
-        # transfer the numerical errors to tables
-        call_create_table(self.compare_results_log_file, self.save_table_path)
+        os.makedirs(self.out_dir, exist_ok=True)
+        # each task's row is appended to task_rows.jsonl when it is done, so an interrupted evaluation resumes
+        rows_path = os.path.join(self.out_dir, "task_rows.jsonl")
+        done = {}
+        if self.resume and os.path.isfile(rows_path):
+            for line in open(rows_path):
+                if line.strip():
+                    row = json.loads(line)
+                    done[row["task"]] = row
+        elif os.path.isfile(rows_path):
+            os.remove(rows_path)
+        todo = [(t, m) for t, m in self.tasks.items() if t not in done]
+        lock = threading.Lock()
 
+        def one(item):
+            task_name, meta = item
+            print(f"🔹 [{self.llm_model}] {task_name}", flush=True)
+            row = self.evaluate_task(task_name, meta)
+            with lock:
+                with open(rows_path, "a") as f:
+                    f.write(json.dumps(row, default=lambda o: o.item() if hasattr(o, "item") else str(o)) + "\n")
+                done[task_name] = row
 
+        with ThreadPoolExecutor(self.parallel) as pool:
+            list(pool.map(one, todo))
+        df = pd.DataFrame([done[t] for t in self.tasks if t in done])
+        # Success: executes, NMSE score 1 and convergent
+        df["success"] = df["executed"].astype(bool) & (df["nmse_score"] == 1.0) & df["converged"].astype(bool)
+        df.to_csv(os.path.join(self.out_dir, "task_results.csv"), index=False)
+        finite = df["nmse"].replace(np.inf, np.nan)
+        summary = {
+            "model": self.llm_model, "prompt": self.prompt_name, "tasks": len(df),
+            "execution_rate": df["executed"].mean(),
+            "nmse_score": df["nmse_score"].mean(),
+            "median_nmse": finite.median(),
+            "convergence_rate": df["converged"].mean(),
+            "success_rate": df["success"].mean(),
+        }
+        pd.DataFrame([summary]).to_csv(os.path.join(self.out_dir, "summary.csv"), index=False)
+        print(pd.DataFrame([summary]).to_string(index=False))
+        return df, summary

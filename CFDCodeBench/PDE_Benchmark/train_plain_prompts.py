@@ -1,5 +1,6 @@
-from utils import PromptGenerator, LLMCodeGenerator, SolverPostProcessor, ConvergentTest
+from utils import PromptGenerator, LLMCodeGenerator, Evaluator
 import os
+import pandas as pd
 
 # STEP 1: generate the prompts
 # Set the root directory (you can also use os.getcwd() if running from root)
@@ -19,9 +20,11 @@ prompts = generator_prompt.create_prompts()
 # Save to prompts.json (will skip if already exists)
 generator_prompt.save_prompts(prompts)
 
-# STEP 2: call LLM API to get generated code
-# Set the model and prompt JSON filename
-# llm_model = "gemini"  # "gpt-4o", ""o3-mini, "sonnet-3.5", "haiku", "lama 4", "gemini: gemini-2.0-flash"
+# STEP 2: call LLM API to get generated code (needs the API keys described in utils.api_key_configuration)
+GENERATE = False
+# STEP 3: run every generated script and score execution, NMSE and convergence
+EVALUATE = True
+
 # List of LLM models to evaluate
 llm_models = [
     "gpt-4o",
@@ -31,26 +34,22 @@ llm_models = [
     "haiku",
 ]
 
-# use gpt-4o to check the code
-# llm_models = ["o3-mini"]
 prompt_json = json_file  # the file under ./prompt/
+summaries = []
 # Loop over all models
 for llm_model in llm_models:
     print(f"\n=== Running for model: {llm_model} ===\n")
     print(f"\n=== Running for prompt: {json_file} ===")
-    # # Instantiate the class
-    # generator_llm = LLMCodeGenerator(llm_model, prompt_json)
-    #
-    # # Call the API to generate code for each task
-    # generator_llm.call_api()
+    if GENERATE:
+        # Call the API to generate code for each task
+        LLMCodeGenerator(llm_model, prompt_json).call_api()
+    if EVALUATE:
+        # Execution (exit code 0 within the time limit), NMSE against results/solution, and a convergence test
+        # (re-run with the declared resolution variables refined). Per-task results: eval/<model>/<prompt>/.
+        _, summary = Evaluator(llm_model, prompt_json).run()
+        summaries.append(summary)
 
-    # STEP 3: post-process the generate code and compare the loss and images
-    # Create the post-processor
-    processor = SolverPostProcessor(llm_model, prompt_json)
-
-    # Run the full post-processing pipeline
-    # this time only run execute LLM generated python code and save the results to log file
-    # processor.run_all()
-
-    convergent_processor = ConvergentTest(llm_model, prompt_json)
-    convergent_processor.run()
+if summaries:
+    os.makedirs(os.path.join(root_dir, "eval"), exist_ok=True)
+    pd.DataFrame(summaries).to_csv(os.path.join(root_dir, "eval", "summary_all_models.csv"), index=False)
+    print(pd.DataFrame(summaries).to_string(index=False))
