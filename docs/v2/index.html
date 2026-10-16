@@ -216,7 +216,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <article class="task">
           <p class="eyebrow">FoamBench</p>
           <p class="n">126<small>OpenFOAM cases</small></p>
-          <p>110 Basic cases in 11 flow families and 16 Advanced cases with new geometries and turbulence models. An agent writes every case file, meshes and runs the solver.</p>
+          <p>110 Basic cases in 11 flow families and 16 Advanced cases with new geometries and turbulence models. An agent (<a href="https://github.com/csml-rpi/Foam-Agent">Foam-Agent</a>) writes every case file, meshes and runs the solver.</p>
           <p class="rule">Success: the solver finishes and the final flow field has NMSE &lt; 0.1 against the reference.</p>
         </article>
       </div>
@@ -226,7 +226,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <li><span>Models</span><span>GPT-5.6 Sol, Gemini 3.1 Pro, Gemini 3.8 Flash, GLM 5.2, Qwen3.8-27B and Llama 4 Maverick 17B Instruct, compared with the original study's Sonnet 3.5, o3-mini, Gemini 2.5 Flash, Haiku 3.5, GPT-4o and Gemma-2-9B.</span></li>
         <li><span>Prompts</span><span>FoamBench prompts now state the values their reference case uses: mesh sizes, boundary values, turbulence inputs, gas properties and time stepping. CFDCodeBench has 24 tasks with explicit output grids.</span></li>
         <li><span>References</span><span>Nine shallow-water references were rebuilt to match their prompts. Rayleigh–Bénard runs are scored against the reference recomputed on each run's own copy of the prompt's mesh, because this convective instability amplifies round-off in the mesh coordinates.</span></li>
-        <li><span>Agents</span><span>FoamBench runs on the previous and the latest Foam-Agent, and with Codex CLI and Claude Code working on the benchmark directly.</span></li>
+        <li><span>Agents</span><span>FoamBench runs on two versions of <a href="https://github.com/csml-rpi/Foam-Agent">Foam-Agent</a>: Foam-Agent 1.0, the version used in the original study, and the current Foam-Agent 2.0. Codex CLI and Claude Code also ran the benchmark directly, without Foam-Agent.</span></li>
       </ul>
     </div>
 
@@ -250,8 +250,8 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
               <button type="button" data-v="advanced" aria-pressed="false">FoamBench Advanced</button>
             </div>
             <div class="seg" role="group" aria-label="Foam-Agent version" id="lb-fw" hidden>
-              <button type="button" data-v="new" aria-pressed="true">Latest Foam-Agent</button>
-              <button type="button" data-v="old" aria-pressed="false">Previous Foam-Agent</button>
+              <button type="button" data-v="old" aria-pressed="false">Foam-Agent 1.0</button>
+              <button type="button" data-v="new" aria-pressed="true">Foam-Agent 2.0</button>
             </div>
           </div>
         </div>
@@ -259,7 +259,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <div class="chart" id="lb-chart"></div>
         <details class="data"><summary>Show data table</summary><div class="tablewrap" id="lb-table"></div></details>
       </figure>
-      <p class="note col" style="margin-inline:0">2025 models: as published in the CFDLLMBench paper, with that study's prompts, its 28-task CFDCodeBench and its Foam-Agent. On FoamBench they are shown next to the previous Foam-Agent version, which has the same agent design.</p>
+      <p class="note col" style="margin-inline:0">2025 models: as published in the CFDLLMBench paper, with that study's prompts, its 28-task CFDCodeBench and Foam-Agent 1.0. On FoamBench they are shown next to the 2026 models run with Foam-Agent 1.0.</p>
     </section>
 
     <section id="old-vs-new" class="col">
@@ -276,8 +276,8 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <div class="fig-head">
           <div class="fig-title"><h3 id="dots-title">Success rate per model, 2025 vs 2026</h3><p id="dots-sub"></p></div>
           <div class="controls"><div class="seg" role="group" aria-label="Foam-Agent version for the 2026 models" id="dots-fw">
-            <button type="button" data-v="old" aria-pressed="true">Previous Foam-Agent</button>
-            <button type="button" data-v="new" aria-pressed="false">Latest Foam-Agent</button>
+            <button type="button" data-v="old" aria-pressed="true">Foam-Agent 1.0</button>
+            <button type="button" data-v="new" aria-pressed="false">Foam-Agent 2.0</button>
           </div></div>
         </div>
         <div class="legend"><span><i class="dot" style="background:var(--paper)"></i>2025 models (original study)</span><span><i class="dot" style="background:var(--v2)"></i>2026 models (V2)</span></div>
@@ -306,8 +306,8 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <p class="tag">FoamBench</p>
         <div class="body">
           <h3>OpenFOAM cases now run and reproduce the reference</h3>
-          <p class="stat">Basic: <b>34%</b> → <b>77%</b> &nbsp;·&nbsp; Advanced: <b>25%</b> → <b>81%</b> (<b>94%</b> with the latest Foam-Agent)</p>
-          <p>With the same Foam-Agent design, the best 2025 model solved 34% of the Basic cases and the best 2026 model solves 77%. On Advanced the best result rises from 25% to 81%, and to 94% with the latest Foam-Agent. Advanced used to be the harder set and is now the easier one, for two reasons: the revised prompts give the values the reference uses, and the agents now build the right geometry (next section).</p>
+          <p class="stat">Basic: <b>34%</b> → <b>77%</b> &nbsp;·&nbsp; Advanced: <b>25%</b> → <b>81%</b> (<b>94%</b> with Foam-Agent 2.0)</p>
+          <p>With Foam-Agent 1.0, the best 2025 model solved 34% of the Basic cases and the best 2026 model solves 77%. On Advanced the best result rises from 25% to 81%, and to 94% with Foam-Agent 2.0. Advanced used to be the harder set and is now the easier one, for two reasons: the revised prompts give the values the reference uses, and the agents now build the right geometry (next section).</p>
           <p class="muted">The Basic failures that remain are mostly geometry shortcuts (a simplified backward-facing step in pitzDaily, the obstacle left out of the dam break) and steady square-bend runs that stop once converged, before the 500 s at which they are scored.</p>
         </div>
       </div>
@@ -327,7 +327,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
       </div>
       <figure class="mainfig" style="margin-top:14px">
         <div class="geo"><img src="img/advanced_geometry.webp" alt="Velocity magnitude for four FoamBench Advanced cases (cylinder, diamond obstacle, two square obstacles, rectangular obstacle). The reference and Gemini 3.1 Pro show the obstacle and its wake; Sonnet 3.5 shows an empty channel for three cases and a solid square block for the diamond case." width="2720" height="2108" loading="lazy"></div>
-        <figcaption>Velocity magnitude at the reference's final time, with the mesh drawn on top and one colour scale per row. Sonnet 3.5 ran the 2025 prompts with the paper's Foam-Agent; Gemini 3.1 Pro ran the V2 prompts with the latest Foam-Agent.</figcaption>
+        <figcaption>Velocity magnitude at the reference's final time, with the mesh drawn on top and one colour scale per row. Sonnet 3.5 ran the 2025 prompts with Foam-Agent 1.0; Gemini 3.1 Pro ran the V2 prompts with Foam-Agent 2.0.</figcaption>
       </figure>
     </section>
 
@@ -337,7 +337,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
         <h2>Reproduce it</h2>
       </div>
       <div class="prose">
-        <p>The V2 datasets, reference solutions and evaluation code are in the <a href="https://github.com/NLR-Theseus/cfdllmbench">GitHub repository</a>: <a href="https://github.com/NLR-Theseus/cfdllmbench/blob/main/CFDQuery/CFDQuery.json">CFDQuery</a>, <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/CFDCodeBench/PDE_Benchmark">CFDCodeBench</a> and <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/FoamBench/Dataset">FoamBench</a>.</p>
+        <p>The V2 datasets, reference solutions and evaluation code are in the <a href="https://github.com/NLR-Theseus/cfdllmbench">GitHub repository</a>: <a href="https://github.com/NLR-Theseus/cfdllmbench/blob/main/CFDQuery/CFDQuery.json">CFDQuery</a>, <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/CFDCodeBench/PDE_Benchmark">CFDCodeBench</a> and <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/FoamBench/Dataset">FoamBench</a>. The FoamBench agent is <a href="https://github.com/csml-rpi/Foam-Agent">Foam-Agent</a>.</p>
         <p class="muted">Temperature 0 wherever the provider allows it. GPT-5.6 Sol and both Gemini models ran at low reasoning effort, and GLM 5.2 and Qwen3.8-27B with thinking off. Codex CLI used GPT-5.6 Sol and Claude Code used Opus 5.5, both at low effort. All simulations use OpenFOAM 10.</p>
       </div>
       <h3 style="margin-top:26px">Cite</h3>
@@ -459,8 +459,8 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
     Object.keys(TASKS).forEach(function (k) {
       var t = TASKS[k], now, then = best(D.paper_models, t.paper);
       if (t.foam) {
-        var nw = best(D.v2_models, function (m) { return foam(m, "new", t.foam); }, function () { return ", latest Foam-Agent"; });
-        var od = best(D.v2_models, function (m) { return foam(m, "old", t.foam); }, function () { return ", previous Foam-Agent"; });
+        var nw = best(D.v2_models, function (m) { return foam(m, "new", t.foam); }, function () { return ", Foam-Agent 2.0"; });
+        var od = best(D.v2_models, function (m) { return foam(m, "old", t.foam); }, function () { return ", Foam-Agent 1.0"; });
         now = nw.v >= od.v ? nw : od;
       } else now = best(D.v2_models, t.v2);
       var tile = h("div", { "class": "kpi" }, c);
@@ -480,10 +480,10 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
       var t = TASKS[task.value], items = [];
       fwG.hidden = !t.foam;
       if (t.foam) {
-        D.v2_models.forEach(function (m) { var v = foam(m, fw.value, t.foam); if (v != null) items.push({ label: m.name, value: v, color: "--v2", group: "2026 model", sub: (fw.value === "new" ? "latest" : "previous") + " Foam-Agent" }); });
+        D.v2_models.forEach(function (m) { var v = foam(m, fw.value, t.foam); if (v != null) items.push({ label: m.name, value: v, color: "--v2", group: "2026 model", sub: "Foam-Agent " + (fw.value === "new" ? "2.0" : "1.0") }); });
         D.agents.forEach(function (a) { var r = a.foam[t.foam]; if (r) items.push({ label: a.name, value: r.Success_Rate, color: "--agent", group: "Coding agent", sub: "no Foam-Agent" }); });
-        if (fw.value === "old") D.paper_models.forEach(function (m) { items.push({ label: m.name, value: t.paper(m), color: "--paper", group: "2025 model", sub: "original study, paper's Foam-Agent" }); });
-        sub.textContent = t.sub + " 2026 models with the " + (fw.value === "new" ? "latest" : "previous") + " Foam-Agent version" + (fw.value === "old" ? ", next to the 2025 models." : ".");
+        if (fw.value === "old") D.paper_models.forEach(function (m) { items.push({ label: m.name, value: t.paper(m), color: "--paper", group: "2025 model", sub: "original study, Foam-Agent 1.0" }); });
+        sub.textContent = t.sub + " 2026 models with Foam-Agent " + (fw.value === "new" ? "2.0." : "1.0, next to the 2025 models (also Foam-Agent 1.0).");
       } else {
         D.v2_models.forEach(function (m) { var v = t.v2(m); if (v != null) items.push({ label: m.name, value: v, color: "--v2", group: "2026 model", sub: task.value === "cfdquery" ? m.cfdquery_correct + " of 90 correct" : "one attempt" }); });
         D.paper_models.forEach(function (m) { items.push({ label: m.name, value: t.paper(m), color: "--paper", group: "2025 model", sub: "original study" }); });
@@ -520,7 +520,7 @@ footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
     var chart = document.getElementById("dots-chart"), sub = document.getElementById("dots-sub"), fw;
     function render() {
       chart.textContent = "";
-      sub.textContent = "FoamBench rows: the 2026 models with the " + (fw.value === "old" ? "previous Foam-Agent version, the same agent design the 2025 models used." : "latest Foam-Agent version.");
+      sub.textContent = "FoamBench rows: the 2026 models with Foam-Agent " + (fw.value === "old" ? "1.0, the version the 2025 models used." : "2.0.");
       var W = 760, labelW = 140, laneW = 56, right = 30, laneH = 30, rowGap = 20, top = 8, r = 7;
       var keys = Object.keys(TASKS), H = top + keys.length * (2 * laneH + rowGap) + 24;
       var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Success rate of each 2025 and 2026 model on the four tasks" }, chart);

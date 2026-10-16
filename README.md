@@ -8,7 +8,7 @@
 
 > **What's new in V2:** we updated the prompts for some cases, evaluated newer LLMs, and evaluated the latest version of Foam-Agent.
 > The latest (V2) datasets are included in this repository (see [Datasets](#-datasets)).
-> V2 results page: **[nlr-theseus.github.io/cfdllmbench/v2](https://nlr-theseus.github.io/cfdllmbench/v2/)** (source: [docs/v2/index.html](docs/v2/index.html)).
+> V2 results page: **[CFDLLMBench V2 results](https://raw.githack.com/NLR-Theseus/cfdllmbench/main/docs/v2/index.html)** (source: [docs/v2/index.html](docs/v2/index.html)).
 
 ---
 
