@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="CFDLLMBench V2: newer language models, revised prompts and two Foam-Agent versions on CFDQuery, CFDCodeBench and FoamBench.">
+<title>CFDLLMBench V2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+/* A benchmark project page: centred title block over the paper's main figure, then a report column with wide figure plates. */
+:root {
+  --bg: #f5f7f9;
+  --plate: #ffffff;
+  --ink: #0d1b2a;
+  --ink-2: #3f4c5a;
+  --muted: #6f7b88;
+  --rule: #dde3e9;
+  --grid: #e8ecf0;
+  --accent: #2a78d6;
+  --v2: #2a78d6;
+  --agent: #eb6834;
+  --paper: #a9b2bc;
+  --paper-ink: #5d6874;
+  --shadow: 0 1px 2px rgba(13, 27, 42, 0.05), 0 10px 30px rgba(13, 27, 42, 0.06);
+  --f-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --f-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0b1119; --plate: #111a24; --ink: #e7edf3; --ink-2: #b6c1cc; --muted: #8392a1; --rule: #233140;
+    --grid: #1b2733; --accent: #5a9cec; --v2: #3987e5; --agent: #d95926; --paper: #5a6673; --paper-ink: #a7b2bd;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0b1119; --plate: #111a24; --ink: #e7edf3; --ink-2: #b6c1cc; --muted: #8392a1; --rule: #233140;
+  --grid: #1b2733; --accent: #5a9cec; --v2: #3987e5; --agent: #d95926; --paper: #5a6673; --paper-ink: #a7b2bd;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 10px 30px rgba(0, 0, 0, 0.25);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.65 var(--f-body); }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.wrap { padding-inline: 20px; }
+.col { max-width: 44rem; margin-inline: auto; }
+.wide { max-width: 72rem; margin-inline: auto; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.6rem, 1.25rem + 1.4vw, 2.2rem); font-weight: 720; font-stretch: 110%; line-height: 1.15; }
+h3 { font-size: 1.18rem; font-weight: 660; }
+p { margin: 0; }
+.eyebrow { font: 500 0.76rem/1.2 var(--f-mono); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); }
+
+/* top bar */
+.topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding-block: 16px; }
+.mark { font: 760 1rem/1 var(--f-display); font-stretch: 118%; color: var(--ink); text-decoration: none; }
+.mark span { font: 500 0.78rem var(--f-mono); color: var(--muted); margin-left: 6px; }
+.toplinks { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 0.92rem; }
+.toplinks a { color: var(--ink-2); text-decoration: none; }
+.toplinks a:hover { color: var(--accent); }
+
+/* hero */
+.hero { text-align: center; padding-block: 36px 10px; display: grid; gap: 18px; justify-items: center; }
+.hero h1 { font-size: clamp(2.6rem, 1.6rem + 4.6vw, 5rem); font-weight: 780; font-stretch: 116%; line-height: 0.98; letter-spacing: -0.025em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.hero .lede { max-width: 46rem; font-size: clamp(1.05rem, 0.98rem + 0.4vw, 1.22rem); color: var(--ink-2); }
+.buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 4px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 9px 16px; border-radius: 999px; font: 500 0.92rem/1 var(--f-body); text-decoration: none; border: 1px solid var(--rule); color: var(--ink); background: var(--plate); }
+.btn.primary { background: var(--ink); color: var(--plate); border-color: var(--ink); }
+.btn svg { width: 16px; height: 16px; }
+.mainfig { margin: 26px 0 0; display: grid; gap: 10px; width: 100%; }
+.mainfig .sheet { background: #ffffff; border-radius: 12px; padding: clamp(8px, 1.5vw, 18px); box-shadow: var(--shadow); border: 1px solid var(--rule); }
+.mainfig img { display: block; width: 100%; height: auto; }
+figcaption { font-size: 0.86rem; color: var(--muted); text-align: center; }
+
+/* sections */
+section { padding-block: 60px 0; }
+.head { display: grid; gap: 10px; margin-bottom: 18px; }
+.prose { display: grid; gap: 14px; }
+.prose .muted, .body .muted { color: var(--ink-2); }
+.tasks { display: grid; grid-template-columns: repeat(auto-fit, minmax(15.5rem, 1fr)); gap: 14px; margin-top: 24px; }
+.task { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; padding: 18px 18px 16px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.task .n { font: 720 2.1rem/1 var(--f-display); font-stretch: 112%; }
+.task .n small { font: 400 0.86rem var(--f-body); color: var(--muted); margin-left: 6px; }
+.task p { font-size: 0.95rem; color: var(--ink-2); }
+.task .rule { font-size: 0.86rem; color: var(--ink); border-top: 1px solid var(--rule); padding-top: 8px; }
+.new { margin: 26px 0 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.new li { display: grid; grid-template-columns: 7rem 1fr; gap: 14px; font-size: 0.97rem; }
+.new li > span:first-child { font: 500 0.76rem/1.95 var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+
+/* KPI tiles */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi { background: var(--plate); border: 1px solid var(--rule); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; }
+.kpi .label { font-size: 0.86rem; color: var(--ink-2); }
+.kpi .vals { display: flex; align-items: baseline; gap: 10px; }
+.kpi .now { font: 720 2.4rem/1 var(--f-display); font-stretch: 110%; }
+.kpi .then { font: 500 0.95rem var(--f-mono); color: var(--muted); }
+.kpi .who { font-size: 0.8rem; color: var(--muted); }
+
+/* figure plates */
+.fig { background: var(--plate); border: 1px solid var(--rule); border-radius: 12px; padding: 20px 20px 16px; display: grid; gap: 14px; box-shadow: var(--shadow); min-width: 0; margin: 0; }
+.fig-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 12px; }
+.fig-title { display: grid; gap: 4px; }
+.fig-title h3 { font-size: 1.05rem; }
+.fig-title p { font-size: 0.88rem; color: var(--ink-2); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px; }
+.seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--bg); }
+.seg button { font: 500 0.84rem/1 var(--f-body); color: var(--ink-2); background: transparent; border: 0; padding: 8px 12px; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--rule); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--plate); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+.legend i.dot { border-radius: 50%; }
+.chart { width: 100%; min-width: 0; overflow-x: auto; }
+.chart svg { display: block; width: 100%; min-width: 34rem; height: auto; overflow: visible; }
+.chart text { font-family: var(--f-body); }
+.chart .tick { font: 400 11px var(--f-mono); fill: var(--muted); }
+.chart .lbl { font-size: 12.5px; fill: var(--ink); }
+.chart .lane { font: 500 11.5px var(--f-mono); fill: var(--muted); }
+.chart .row { font: 650 13px var(--f-display); fill: var(--ink); }
+.chart .val { font: 500 11.5px var(--f-mono); fill: var(--ink-2); }
+.chart .hit { cursor: default; }
+.chart .hit:focus { outline: none; }
+.chart .hit:focus .focusring { stroke: var(--accent); stroke-width: 2; }
+details.data summary { cursor: pointer; color: var(--ink-2); font: 400 0.8rem var(--f-mono); letter-spacing: 0.04em; }
+.tablewrap { overflow-x: auto; margin-top: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 600; color: var(--ink-2); font-size: 0.8rem; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); }
+.note { font-size: 0.86rem; color: var(--ink-2); margin-top: 12px; }
+
+/* findings */
+.findings { display: grid; gap: 30px; margin-top: 34px; }
+.finding { display: grid; grid-template-columns: 9.5rem 1fr; gap: 6px 22px; }
+.finding .tag { font: 500 0.78rem/2.1 var(--f-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.07em; }
+.finding .body { display: grid; gap: 10px; min-width: 0; }
+.finding .stat { font: 500 0.9rem var(--f-mono); color: var(--ink-2); }
+.finding .stat b { color: var(--ink); font-weight: 600; }
+@media (max-width: 640px) { .finding { grid-template-columns: 1fr; } .new li { grid-template-columns: 1fr; gap: 2px; } }
+
+/* geometry figure */
+.geo { background: #0e1726; border-radius: 12px; padding: clamp(6px, 1.2vw, 14px); box-shadow: var(--shadow); }
+.geo img { display: block; width: 100%; height: auto; border-radius: 6px; }
+.bigstat { display: flex; flex-wrap: wrap; gap: 14px 44px; margin: 22px 0 4px; }
+.bigstat div { display: grid; gap: 2px; }
+.bigstat b { font: 720 2.3rem/1 var(--f-display); font-stretch: 110%; }
+.bigstat span { font-size: 0.86rem; color: var(--ink-2); }
+
+#tip { position: fixed; z-index: 10; pointer-events: none; background: var(--ink); color: var(--plate); border-radius: 6px; padding: 8px 10px; font-size: 0.82rem; line-height: 1.35; max-width: 18rem; box-shadow: 0 6px 18px rgba(0,0,0,0.2); }
+#tip .tv { font: 600 1rem/1.2 var(--f-mono); }
+#tip .tk { opacity: 0.8; }
+.cite { background: var(--plate); border: 1px solid var(--rule); border-radius: 8px; padding: 14px 16px; overflow-x: auto; font: 400 0.8rem/1.5 var(--f-mono); white-space: pre; color: var(--ink-2); margin-top: 10px; }
+footer { padding-block: 44px 56px; color: var(--muted); font-size: 0.86rem; }
+@media (max-width: 560px) { body { font-size: 16px; } .fig { padding: 14px 12px 12px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="wide topbar">
+    <a class="mark" href="#top">CFDLLMBench<span>V2</span></a>
+    <nav class="toplinks" aria-label="Sections and links">
+      <a href="#benchmark">Benchmark</a>
+      <a href="#results">Results</a>
+      <a href="#old-vs-new">Old vs new</a>
+      <a href="#geometry">Advanced cases</a>
+      <a href="https://github.com/NLR-Theseus/cfdllmbench">GitHub</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="wide hero">
+      <p class="eyebrow">Benchmark update · October 2026</p>
+      <h1>CFDLLMBench <em>V2</em></h1>
+      <p class="lede">CFDLLMBench measures how well large language models handle computational fluid dynamics, from graduate-level numerics to setting up and running real OpenFOAM simulations. V2 runs the benchmark on six current models with revised prompts and corrected references, and compares them with the models of the original study.</p>
+      <div class="buttons">
+        <a class="btn primary" href="https://openreview.net/forum?id=kTcH1MnkjY"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 1.5h5.5L13 5v9.5H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9.5 1.5V5H13" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>Paper</a>
+        <a class="btn" href="https://github.com/NLR-Theseus/cfdllmbench"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 4.5 2 8l3.5 3.5M10.5 4.5 14 8l-3.5 3.5" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Code</a>
+        <a class="btn" href="https://github.com/NLR-Theseus/cfdllmbench#-datasets"><svg viewBox="0 0 16 16" aria-hidden="true"><ellipse cx="8" cy="4" rx="5" ry="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4M3 8c0 1.1 2.2 2 5 2s5-.9 5-2" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>Datasets</a>
+      </div>
+      <figure class="mainfig">
+        <div class="sheet"><img src="img/main_figure.webp" alt="Overview of CFDLLMBench: CFDQuery asks multiple-choice numerics questions, CFDCodeBench asks for a Python solver of a PDE such as 1D viscous Burgers, and FoamBench asks an agent to set up, mesh and run an OpenFOAM case such as the lid-driven cavity" width="2400" height="1264"></div>
+        <figcaption>The three tasks: graduate CFD knowledge, numerical and physical reasoning in code, and complete OpenFOAM workflows.</figcaption>
+      </figure>
+    </div>
+
+    <section id="benchmark" class="col">
+      <div class="head">
+        <p class="eyebrow">The benchmark</p>
+        <h2>What CFDLLMBench V2 measures</h2>
+      </div>
+      <div class="prose">
+        <p>A CFD engineer needs three things: knowing the numerics, turning a problem statement into a working solver, and setting up a simulation that reproduces the right flow. CFDLLMBench tests each one separately. The scoring is strict: an answer is right or wrong, and code or a simulation only counts if it runs and matches a reference solution.</p>
+      </div>
+    </section>
+    <div class="wide">
+      <div class="tasks">
+        <article class="task">
+          <p class="eyebrow">CFDQuery</p>
+          <p class="n">90<small>questions</small></p>
+          <p>Multiple-choice questions on modified equations, stability, dispersion and non-uniform grids.</p>
+          <p class="rule">Success: the share of questions answered correctly.</p>
+        </article>
+        <article class="task">
+          <p class="eyebrow">CFDCodeBench</p>
+          <p class="n">24<small>PDE problems</small></p>
+          <p>From 1D Burgers to Rayleigh–Bénard convection. The model writes a Python solver in one attempt.</p>
+          <p class="rule">Success: the code runs, NMSE &lt; 0.1 against the reference, and it stays accurate at finer resolution.</p>
+        </article>
+        <article class="task">
+          <p class="eyebrow">FoamBench</p>
+          <p class="n">126<small>OpenFOAM cases</small></p>
+          <p>110 Basic cases in 11 flow families and 16 Advanced cases with new geometries and turbulence models. An agent writes every case file, meshes and runs the solver.</p>
+          <p class="rule">Success: the solver finishes and the final flow field has NMSE &lt; 0.1 against the reference.</p>
+        </article>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="new" aria-label="What is new in V2">
+        <li><span>Models</span><span>GPT-5.6 Sol, Gemini 3.1 Pro, Gemini 3.8 Flash, GLM 5.2, Qwen3.8-27B and Llama 4 Maverick 17B Instruct, compared with the original study's Sonnet 3.5, o3-mini, Gemini 2.5 Flash, Haiku 3.5, GPT-4o and Gemma-2-9B.</span></li>
+        <li><span>Prompts</span><span>FoamBench prompts now state the values their reference case uses: mesh sizes, boundary values, turbulence inputs, gas properties and time stepping. CFDCodeBench has 24 tasks with explicit output grids.</span></li>
+        <li><span>References</span><span>Nine shallow-water references were rebuilt to match their prompts. Rayleigh–Bénard runs are scored against the reference recomputed on each run's own copy of the prompt's mesh, because this convective instability amplifies round-off in the mesh coordinates.</span></li>
+        <li><span>Agents</span><span>FoamBench runs on the previous and the latest Foam-Agent, and with Codex CLI and Claude Code working on the benchmark directly.</span></li>
+      </ul>
+    </div>
+
+    <section id="results" class="wide">
+      <div class="head col" style="margin-inline:0">
+        <p class="eyebrow">Results</p>
+        <h2>Success rate on every task</h2>
+      </div>
+      <div class="kpis" id="kpis" aria-label="Best success rate per task: CFDLLMBench V2 against the original study"></div>
+      <figure class="fig" aria-labelledby="lb-title">
+        <div class="fig-head">
+          <div class="fig-title">
+            <h3 id="lb-title">Leaderboard</h3>
+            <p id="lb-sub"></p>
+          </div>
+          <div class="controls">
+            <div class="seg" role="group" aria-label="Task" id="lb-task">
+              <button type="button" data-v="cfdquery" aria-pressed="true">CFDQuery</button>
+              <button type="button" data-v="cfdcodebench" aria-pressed="false">CFDCodeBench</button>
+              <button type="button" data-v="basic" aria-pressed="false">FoamBench Basic</button>
+              <button type="button" data-v="advanced" aria-pressed="false">FoamBench Advanced</button>
+            </div>
+            <div class="seg" role="group" aria-label="Foam-Agent version" id="lb-fw" hidden>
+              <button type="button" data-v="new" aria-pressed="true">Latest Foam-Agent</button>
+              <button type="button" data-v="old" aria-pressed="false">Previous Foam-Agent</button>
+            </div>
+          </div>
+        </div>
+        <div class="legend" id="lb-legend"></div>
+        <div class="chart" id="lb-chart"></div>
+        <details class="data"><summary>Show data table</summary><div class="tablewrap" id="lb-table"></div></details>
+      </figure>
+      <p class="note col" style="margin-inline:0">2025 models: as published in the CFDLLMBench paper, with that study's prompts, its 28-task CFDCodeBench and its Foam-Agent. On FoamBench they are shown next to the previous Foam-Agent version, which has the same agent design.</p>
+    </section>
+
+    <section id="old-vs-new" class="col">
+      <div class="head">
+        <p class="eyebrow">Old vs new models</p>
+        <h2>What changed between the 2025 and the 2026 models</h2>
+      </div>
+      <div class="prose">
+        <p>Each dot is one model: grey for the six models of the original study, blue for the six models of V2.</p>
+      </div>
+    </section>
+    <div class="wide" style="margin-top:18px">
+      <figure class="fig" aria-labelledby="dots-title">
+        <div class="fig-head">
+          <div class="fig-title"><h3 id="dots-title">Success rate per model, 2025 vs 2026</h3><p id="dots-sub"></p></div>
+          <div class="controls"><div class="seg" role="group" aria-label="Foam-Agent version for the 2026 models" id="dots-fw">
+            <button type="button" data-v="old" aria-pressed="true">Previous Foam-Agent</button>
+            <button type="button" data-v="new" aria-pressed="false">Latest Foam-Agent</button>
+          </div></div>
+        </div>
+        <div class="legend"><span><i class="dot" style="background:var(--paper)"></i>2025 models (original study)</span><span><i class="dot" style="background:var(--v2)"></i>2026 models (V2)</span></div>
+        <div class="chart" id="dots-chart"></div>
+        <details class="data"><summary>Show data table</summary><div class="tablewrap" id="dots-table"></div></details>
+      </figure>
+    </div>
+    <div class="col findings">
+      <div class="finding">
+        <p class="tag">CFDQuery</p>
+        <div class="body">
+          <h3>Knowledge has plateaued</h3>
+          <p class="stat">2025: <b>59–91%</b> &nbsp;·&nbsp; 2026: <b>80–86%</b></p>
+          <p>Every 2026 model answers between 80% and 86% of the 90 questions. The weaker models caught up, but the top didn't move: no 2026 model beats o3-mini's 91% (82 of 90). Some misses look like answer-key problems. On question 3, all six models pick the option with the correct fourth-order coefficients, while the key marks a different one.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <p class="tag">CFDCodeBench</p>
+        <div class="body">
+          <h3>Writing a working solver went from rare to routine</h3>
+          <p class="stat">2025 best: <b>14%</b> &nbsp;·&nbsp; 2026 best: <b>75%</b></p>
+          <p>In 2025 the best model wrote a correct, convergent solver for 14% of the problems. Three 2026 models reach 75% in a single attempt with no error feedback, and every 2026 model writes code that runs on at least 79% of the tasks; what remains is accuracy. The task set was also revised (28 tasks then, 24 now, with explicit output grids), so the jump combines better models with clearer tasks.</p>
+        </div>
+      </div>
+      <div class="finding">
+        <p class="tag">FoamBench</p>
+        <div class="body">
+          <h3>OpenFOAM cases now run and reproduce the reference</h3>
+          <p class="stat">Basic: <b>34%</b> → <b>77%</b> &nbsp;·&nbsp; Advanced: <b>25%</b> → <b>81%</b> (<b>94%</b> with the latest Foam-Agent)</p>
+          <p>With the same Foam-Agent design, the best 2025 model solved 34% of the Basic cases and the best 2026 model solves 77%. On Advanced the best result rises from 25% to 81%, and to 94% with the latest Foam-Agent. Advanced used to be the harder set and is now the easier one, for two reasons: the revised prompts give the values the reference uses, and the agents now build the right geometry (next section).</p>
+          <p class="muted">The Basic failures that remain are mostly geometry shortcuts (a simplified backward-facing step in pitzDaily, the obstacle left out of the dam break) and steady square-bend runs that stop once converged, before the 500 s at which they are scored.</p>
+        </div>
+      </div>
+    </div>
+
+    <section id="geometry" class="wide">
+      <div class="head col" style="margin-inline:0">
+        <p class="eyebrow">FoamBench Advanced</p>
+        <h2>The geometry is right now</h2>
+      </div>
+      <div class="prose col" style="margin-inline:0">
+        <p>The Advanced cases put new obstacles in the flow. In the original study, Sonnet 3.5, the best 2025 model, built none of the four obstacles below: it simulated an empty channel, or a solid square block in place of the diamond. With V2, Gemini 3.1 Pro builds every one. On the cylinder its mesh is identical to the reference; on the other three it uses a coarser mesh, and all four still match the reference within NMSE 0.1.</p>
+      </div>
+      <div class="bigstat" aria-label="FoamBench Advanced cases solved">
+        <div><b>2 / 16</b><span>Advanced cases solved, Sonnet 3.5 (2025)</span></div>
+        <div><b style="color:var(--accent)">15 / 16</b><span>Advanced cases solved, Gemini 3.1 Pro (V2)</span></div>
+      </div>
+      <figure class="mainfig" style="margin-top:14px">
+        <div class="geo"><img src="img/advanced_geometry.webp" alt="Velocity magnitude for four FoamBench Advanced cases (cylinder, diamond obstacle, two square obstacles, rectangular obstacle). The reference and Gemini 3.1 Pro show the obstacle and its wake; Sonnet 3.5 shows an empty channel for three cases and a solid square block for the diamond case." width="2720" height="2108" loading="lazy"></div>
+        <figcaption>Velocity magnitude at the reference's final time, with the mesh drawn on top and one colour scale per row. Sonnet 3.5 ran the 2025 prompts with the paper's Foam-Agent; Gemini 3.1 Pro ran the V2 prompts with the latest Foam-Agent.</figcaption>
+      </figure>
+    </section>
+
+    <section id="data" class="col">
+      <div class="head">
+        <p class="eyebrow">Data and code</p>
+        <h2>Reproduce it</h2>
+      </div>
+      <div class="prose">
+        <p>The V2 datasets, reference solutions and evaluation code are in the <a href="https://github.com/NLR-Theseus/cfdllmbench">GitHub repository</a>: <a href="https://github.com/NLR-Theseus/cfdllmbench/blob/main/CFDQuery/CFDQuery.json">CFDQuery</a>, <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/CFDCodeBench/PDE_Benchmark">CFDCodeBench</a> and <a href="https://github.com/NLR-Theseus/cfdllmbench/tree/main/FoamBench/Dataset">FoamBench</a>.</p>
+        <p class="muted">Temperature 0 wherever the provider allows it. GPT-5.6 Sol and both Gemini models ran at low reasoning effort, and GLM 5.2 and Qwen3.8-27B with thinking off. Codex CLI used GPT-5.6 Sol and Claude Code used Opus 5.5, both at low effort. All simulations use OpenFOAM 10.</p>
+      </div>
+      <h3 style="margin-top:26px">Cite</h3>
+      <pre class="cite">@article{somasekharan2025cfdllmbench,
+  title={{CFDLLMBench}: A Benchmark Suite for Evaluating Large Language Models in Computational Fluid Dynamics},
+  author={Somasekharan, Nithin and Yue, Ling and Cao, Yadi and Li, Weichao and Emami, Patrick and Bhargav, Pochinapeddi Sai and Acharya, Anurag and Xie, Xingyu and Pan, Shaowu},
+  journal={Journal of Data-centric Machine Learning Research},
+  volume={3}, number={13}, pages={1--40}, year={2026},
+  url={https://openreview.net/forum?id=kTcH1MnkjY}
+}</pre>
+    </section>
+  </main>
+  <footer class="col">CFDLLMBench V2 · <a href="https://github.com/NLR-Theseus/cfdllmbench">github.com/NLR-Theseus/cfdllmbench</a></footer>
+</div>
+<div id="tip" role="status" hidden></div>
+<script type="application/json" id="bench-data">{"paper_models":[{"name":"Sonnet 3.5","cfdquery":0.8,"cfdcodebench":0.0714,"foam":{"basic":0.336,"advanced":0.25}},{"name":"o3-mini","cfdquery":0.911,"cfdcodebench":0.1429,"foam":{"basic":0.263,"advanced":0.187}},{"name":"Gemini 2.5 Flash","cfdquery":0.777,"cfdcodebench":0.1429,"foam":{"basic":0.136,"advanced":0.0}},{"name":"Haiku 3.5","cfdquery":0.677,"cfdcodebench":0.1429,"foam":{"basic":0.191,"advanced":0.187}},{"name":"GPT-4o","cfdquery":0.811,"cfdcodebench":0.1071,"foam":{"basic":0.281,"advanced":0.25}},{"name":"Gemma-2-9B-IT","cfdquery":0.588,"cfdcodebench":0.0357,"foam":{"basic":0.0,"advanced":0.0}}],"v2_models":[{"name":"GPT-5.6 Sol (effort=low)","run":"gpt_5_6_sol_low","cfdquery":0.8556,"cfdquery_correct":77,"cfdcodebench":{"execution_rate":1.0,"nmse_score":0.75,"convergence_rate":0.75,"success_rate":0.75},"foam":{"old":{"basic":{"M_exec":0.845,"M_struct":0.924,"M_file":0.855,"M_NMSE":0.714,"Success_Rate":0.664},"advanced":{"M_exec":0.75,"M_struct":0.835,"M_file":0.702,"M_NMSE":0.75,"Success_Rate":0.75}},"new":{"basic":{"M_exec":0.936,"M_struct":0.926,"M_file":0.837,"M_NMSE":0.736,"Success_Rate":0.691},"advanced":{"M_exec":0.875,"M_struct":0.839,"M_file":0.671,"M_NMSE":0.781,"Success_Rate":0.75}}}},{"name":"Gemini 3.1 Pro (effort=low)","run":"gemini_3_1_pro_preview_low","cfdquery":0.8222,"cfdquery_correct":74,"cfdcodebench":{"execution_rate":1.0,"nmse_score":0.7708,"convergence_rate":0.75,"success_rate":0.75},"foam":{"old":{"basic":{"M_exec":0.955,"M_struct":0.917,"M_file":0.876,"M_NMSE":0.777,"Success_Rate":0.773},"advanced":{"M_exec":0.875,"M_struct":0.879,"M_file":0.76,"M_NMSE":0.812,"Success_Rate":0.812}},"new":{"basic":{"M_exec":1.0,"M_struct":0.918,"M_file":0.871,"M_NMSE":0.741,"Success_Rate":0.736},"advanced":{"M_exec":1.0,"M_struct":0.787,"M_file":0.67,"M_NMSE":0.938,"Success_Rate":0.938}}}},{"name":"Gemini 3.8 Flash (effort=low)","run":"gemini_3_8_flash_low","cfdquery":0.8333,"cfdquery_correct":75,"cfdcodebench":{"execution_rate":0.9167,"nmse_score":0.75,"convergence_rate":0.7917,"success_rate":0.75},"foam":{"old":{"basic":{"M_exec":0.936,"M_struct":0.945,"M_file":0.893,"M_NMSE":0.745,"Success_Rate":0.736},"advanced":{"M_exec":0.875,"M_struct":0.846,"M_file":0.731,"M_NMSE":0.75,"Success_Rate":0.75}},"new":{"basic":{"M_exec":0.991,"M_struct":0.909,"M_file":0.839,"M_NMSE":0.732,"Success_Rate":0.727},"advanced":{"M_exec":0.938,"M_struct":0.835,"M_file":0.709,"M_NMSE":0.812,"Success_Rate":0.812}}}},{"name":"GLM 5.2","run":"glm_5_2_maas_none","cfdquery":0.8556,"cfdquery_correct":77,"cfdcodebench":{"execution_rate":0.875,"nmse_score":0.5417,"convergence_rate":0.5417,"success_rate":0.5417},"foam":{"old":{"basic":{"M_exec":0.873,"M_struct":0.951,"M_file":0.902,"M_NMSE":0.745,"Success_Rate":0.736},"advanced":{"M_exec":0.5,"M_struct":0.847,"M_file":0.7,"M_NMSE":0.375,"Success_Rate":0.375}},"new":{"basic":{"M_exec":0.9,"M_struct":0.916,"M_file":0.845,"M_NMSE":0.618,"Success_Rate":0.582},"advanced":{"M_exec":0.625,"M_struct":0.828,"M_file":0.696,"M_NMSE":0.438,"Success_Rate":0.438}}}},{"name":"Qwen3.8-27B","run":"qwen3_8_27b_fp8_none","cfdquery":0.8,"cfdquery_correct":72,"cfdcodebench":{"execution_rate":0.7917,"nmse_score":0.4167,"convergence_rate":0.375,"success_rate":0.375},"foam":{"old":{"basic":{"M_exec":0.764,"M_struct":0.865,"M_file":0.808,"M_NMSE":0.559,"Success_Rate":0.509},"advanced":{"M_exec":0.125,"M_struct":0.836,"M_file":0.684,"M_NMSE":0.125,"Success_Rate":0.125}},"new":{"basic":{"M_exec":0.855,"M_struct":0.881,"M_file":0.812,"M_NMSE":0.541,"Success_Rate":0.445},"advanced":{"M_exec":0.562,"M_struct":0.842,"M_file":0.677,"M_NMSE":0.5,"Success_Rate":0.438}}}},{"name":"Llama 4 Maverick 17B Instruct","run":"llama4_maverick_17b_instruct_bedrock","cfdquery":0.8556,"cfdquery_correct":77,"cfdcodebench":{"execution_rate":0.8333,"nmse_score":0.2917,"convergence_rate":0.3333,"success_rate":0.2917},"foam":{"old":{"basic":{"M_exec":0.645,"M_struct":0.937,"M_file":0.861,"M_NMSE":0.455,"Success_Rate":0.418},"advanced":{"M_exec":0.125,"M_struct":0.802,"M_file":0.637,"M_NMSE":0.062,"Success_Rate":0.062}},"new":{"basic":{"M_exec":0.273,"M_struct":0.873,"M_file":0.775,"M_NMSE":0.141,"Success_Rate":0.127},"advanced":{"M_exec":0.125,"M_struct":0.689,"M_file":0.573,"M_NMSE":0.094,"Success_Rate":0.062}}}}],"agents":[{"name":"Codex CLI (GPT-5.6 Sol, effort=low)","key":"codex","foam":{"basic":{"M_exec":1.0,"M_struct":0.866,"M_file":0.672,"M_NMSE":0.273,"Success_Rate":0.227},"advanced":{"M_exec":1.0,"M_struct":0.804,"M_file":0.595,"M_NMSE":0.5,"Success_Rate":0.438}}},{"name":"Claude Code (Opus 5.5, effort=low)","key":"claude_code","foam":{"basic":{"M_exec":1.0,"M_struct":0.895,"M_file":0.772,"M_NMSE":0.655,"Success_Rate":0.527},"advanced":{"M_exec":1.0,"M_struct":0.821,"M_file":0.662,"M_NMSE":0.625,"Success_Rate":0.562}}}]}</script>
+<script>
+(function () {
+  "use strict";
+  var D = JSON.parse(document.getElementById("bench-data").textContent);
+  var NS = "http://www.w3.org/2000/svg", tip = document.getElementById("tip");
+  function el(tag, attrs, parent, text) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text !== undefined) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function h(tag, attrs, parent, text) {
+    var n = document.createElement(tag);
+    for (var k in (attrs || {})) n.setAttribute(k, attrs[k]);
+    if (text !== undefined) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function pct(v) { return Math.round(v * 100) + "%"; }
+  function f2(v) { return (Math.round(v * 100) / 100).toFixed(2); }
+  function short(n) { return n.replace(" (effort=low)", "").replace(" 17B Instruct", ""); }
+  function showTip(evt, value, label, sub) {
+    tip.textContent = "";
+    h("div", { "class": "tv" }, tip, value);
+    h("div", {}, tip, label);
+    if (sub) h("div", { "class": "tk" }, tip, sub);
+    tip.hidden = false;
+    var r = tip.getBoundingClientRect(), x, y;
+    if (evt.type !== "focus" && evt.clientX !== undefined) { x = evt.clientX + 14; y = evt.clientY + 14; }
+    else { var b = evt.target.getBoundingClientRect(); x = b.left + b.width / 2; y = b.bottom + 8; }
+    if (x + r.width > window.innerWidth - 8) x = window.innerWidth - r.width - 8;
+    if (y + r.height > window.innerHeight - 8) y = y - r.height - 28;
+    tip.style.left = Math.max(8, x) + "px";
+    tip.style.top = Math.max(8, y) + "px";
+  }
+  function hideTip() { tip.hidden = true; }
+  function hover(node, value, label, sub) {
+    node.setAttribute("tabindex", "0");
+    node.setAttribute("aria-label", label + ": " + value + (sub ? ", " + sub : ""));
+    node.addEventListener("pointermove", function (e) { showTip(e, value, label, sub); });
+    node.addEventListener("pointerleave", hideTip);
+    node.addEventListener("focus", function (e) { showTip(e, value, label, sub); });
+    node.addEventListener("blur", hideTip);
+  }
+  function barPath(x0, y, w, hgt) {  // 4px rounded data end, square base
+    var r = Math.min(4, w / 2, hgt / 2);
+    if (w <= 0.5) return "M" + x0 + "," + y + "h0.5v" + hgt + "h-0.5z";
+    return "M" + x0 + "," + y + "h" + (w - r) + "a" + r + "," + r + " 0 0 1 " + r + "," + r + "v" + (hgt - 2 * r) +
+      "a" + r + "," + r + " 0 0 1 " + (-r) + "," + r + "h" + (-(w - r)) + "z";
+  }
+  function legend(c, items) {
+    c.textContent = "";
+    items.forEach(function (it) { var s = h("span", {}, c); var i = h("i", {}, s); i.style.background = "var(" + it.color + ")"; s.appendChild(document.createTextNode(it.label)); });
+  }
+  function table(c, head, rows, numCols) {
+    c.textContent = "";
+    var t = h("table", {}, c), tr = h("tr", {}, h("thead", {}, t));
+    head.forEach(function (x, i) { h("th", numCols.indexOf(i) >= 0 ? { "class": "num" } : {}, tr, x); });
+    var tb = h("tbody", {}, t);
+    rows.forEach(function (r) { var row = h("tr", {}, tb); r.forEach(function (x, i) { h("td", numCols.indexOf(i) >= 0 ? { "class": "num" } : {}, row, x); }); });
+  }
+  function segment(id, onChange) {
+    var g = document.getElementById(id);
+    var st = { value: g.querySelector('[aria-pressed="true"]').getAttribute("data-v") };
+    g.addEventListener("click", function (e) {
+      var b = e.target.closest("button"); if (!b) return;
+      g.querySelectorAll("button").forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      st.value = b.getAttribute("data-v"); onChange();
+    });
+    return st;
+  }
+  function axisX(svg, x0, plotW, top, bottom, H) {
+    [0, 0.25, 0.5, 0.75, 1].forEach(function (t) {
+      var x = x0 + t * plotW;
+      el("line", { x1: x, x2: x, y1: top, y2: bottom, stroke: "var(--grid)", "stroke-width": 1 }, svg);
+      el("text", { x: x, y: H - 6, "text-anchor": "middle", "class": "tick" }, svg, pct(t));
+    });
+  }
+
+  function foam(m, fw, ds) { var r = m.foam[fw] && m.foam[fw][ds]; return r ? r.Success_Rate : null; }
+  var TASKS = {
+    cfdquery: { label: "CFDQuery", v2: function (m) { return m.cfdquery; }, paper: function (m) { return m.cfdquery; },
+                sub: "CFDQuery: 90 multiple-choice questions." },
+    cfdcodebench: { label: "CFDCodeBench", v2: function (m) { return m.cfdcodebench.success_rate; }, paper: function (m) { return m.cfdcodebench; },
+                    sub: "CFDCodeBench: the solver runs, has NMSE < 0.1 and converges. 2026 models: 24 tasks, one attempt." },
+    basic: { label: "FoamBench Basic", foam: "basic", paper: function (m) { return m.foam.basic; }, sub: "FoamBench Basic: 110 cases." },
+    advanced: { label: "FoamBench Advanced", foam: "advanced", paper: function (m) { return m.foam.advanced; }, sub: "FoamBench Advanced: 16 cases." }
+  };
+
+  /* ---------- KPI tiles: best 2026 vs best 2025 ---------- */
+  (function () {
+    var c = document.getElementById("kpis");
+    function best(list, get, tag) {
+      var b = null;
+      list.forEach(function (m) {
+        var v = get(m); if (v == null) return;
+        if (!b || v > b.v + 1e-9) b = { v: v, n: [short(m.name) + (tag ? tag(m) : "")] };
+        else if (Math.abs(v - b.v) <= 1e-9) b.n.push(short(m.name) + (tag ? tag(m) : ""));
+      });
+      return b;
+    }
+    Object.keys(TASKS).forEach(function (k) {
+      var t = TASKS[k], now, then = best(D.paper_models, t.paper);
+      if (t.foam) {
+        var nw = best(D.v2_models, function (m) { return foam(m, "new", t.foam); }, function () { return ", latest Foam-Agent"; });
+        var od = best(D.v2_models, function (m) { return foam(m, "old", t.foam); }, function () { return ", previous Foam-Agent"; });
+        now = nw.v >= od.v ? nw : od;
+      } else now = best(D.v2_models, t.v2);
+      var tile = h("div", { "class": "kpi" }, c);
+      h("span", { "class": "label" }, tile, t.label + ", best model");
+      var vals = h("div", { "class": "vals" }, tile);
+      h("span", { "class": "now" }, vals, pct(now.v));
+      h("span", { "class": "then" }, vals, "2025: " + pct(then.v));
+      h("span", { "class": "who" }, tile, now.n.join(" · "));
+    });
+  })();
+
+  /* ---------- leaderboard ---------- */
+  (function () {
+    var chart = document.getElementById("lb-chart"), sub = document.getElementById("lb-sub"), fwG = document.getElementById("lb-fw");
+    var task, fw;
+    function render() {
+      var t = TASKS[task.value], items = [];
+      fwG.hidden = !t.foam;
+      if (t.foam) {
+        D.v2_models.forEach(function (m) { var v = foam(m, fw.value, t.foam); if (v != null) items.push({ label: m.name, value: v, color: "--v2", group: "2026 model", sub: (fw.value === "new" ? "latest" : "previous") + " Foam-Agent" }); });
+        D.agents.forEach(function (a) { var r = a.foam[t.foam]; if (r) items.push({ label: a.name, value: r.Success_Rate, color: "--agent", group: "Coding agent", sub: "no Foam-Agent" }); });
+        if (fw.value === "old") D.paper_models.forEach(function (m) { items.push({ label: m.name, value: t.paper(m), color: "--paper", group: "2025 model", sub: "original study, paper's Foam-Agent" }); });
+        sub.textContent = t.sub + " 2026 models with the " + (fw.value === "new" ? "latest" : "previous") + " Foam-Agent version" + (fw.value === "old" ? ", next to the 2025 models." : ".");
+      } else {
+        D.v2_models.forEach(function (m) { var v = t.v2(m); if (v != null) items.push({ label: m.name, value: v, color: "--v2", group: "2026 model", sub: task.value === "cfdquery" ? m.cfdquery_correct + " of 90 correct" : "one attempt" }); });
+        D.paper_models.forEach(function (m) { items.push({ label: m.name, value: t.paper(m), color: "--paper", group: "2025 model", sub: "original study" }); });
+        sub.textContent = t.sub;
+      }
+      items.sort(function (a, b) { return b.value - a.value; });
+      var leg = [{ label: "2026 models (V2)", color: "--v2" }];
+      if (t.foam) leg.push({ label: "Coding agents", color: "--agent" });
+      if (!t.foam || fw.value === "old") leg.push({ label: "2025 models (original study)", color: "--paper" });
+      legend(document.getElementById("lb-legend"), leg);
+      chart.textContent = "";
+      var W = 760, labelW = 270, right = 48, rowH = 30, barH = 18, top = 6, H = top + items.length * rowH + 28;
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": sub.textContent + " Bars sorted by success rate." }, chart);
+      var x0 = labelW, plotW = W - labelW - right;
+      axisX(svg, x0, plotW, top - 2, H - 22, H);
+      items.forEach(function (it, i) {
+        var y = top + i * rowH, w = it.value * plotW;
+        var name = el("text", { x: x0 - 10, y: y + rowH / 2 + 4, "text-anchor": "end", "class": "lbl" }, svg, it.label);
+        if (it.color === "--paper") name.setAttribute("style", "fill:var(--paper-ink)");
+        var g = el("g", { "class": "hit" }, svg);
+        el("rect", { "class": "focusring", x: x0, y: y + 1, width: plotW, height: rowH - 2, fill: "transparent" }, g);
+        el("path", { "class": "bar", d: barPath(x0, y + (rowH - barH) / 2, w, barH), fill: "var(" + it.color + ")" }, g);
+        el("text", { x: x0 + w + 6, y: y + rowH / 2 + 4, "class": "val" }, svg, f2(it.value));
+        hover(g, pct(it.value), it.label, it.group + (it.sub ? ", " + it.sub : ""));
+      });
+      table(document.getElementById("lb-table"), ["Model", "Group", "Success rate"], items.map(function (i) { return [i.label, i.group, f2(i.value)]; }), [2]);
+    }
+    task = segment("lb-task", render); fw = segment("lb-fw", render);
+    render();
+  })();
+
+  /* ---------- old vs new: one strip of dots per task and year ---------- */
+  (function () {
+    var chart = document.getElementById("dots-chart"), sub = document.getElementById("dots-sub"), fw;
+    function render() {
+      chart.textContent = "";
+      sub.textContent = "FoamBench rows: the 2026 models with the " + (fw.value === "old" ? "previous Foam-Agent version, the same agent design the 2025 models used." : "latest Foam-Agent version.");
+      var W = 760, labelW = 140, laneW = 56, right = 30, laneH = 30, rowGap = 20, top = 8, r = 7;
+      var keys = Object.keys(TASKS), H = top + keys.length * (2 * laneH + rowGap) + 24;
+      var svg = el("svg", { viewBox: "0 0 " + W + " " + H, role: "img", "aria-label": "Success rate of each 2025 and 2026 model on the four tasks" }, chart);
+      var x0 = labelW + laneW, plotW = W - x0 - right, rows = [];
+      axisX(svg, x0, plotW, top, H - 22, H);
+      keys.forEach(function (k, i) {
+        var t = TASKS[k], y0 = top + i * (2 * laneH + rowGap);
+        if (i > 0) el("line", { x1: 0, x2: W - right, y1: y0 - rowGap / 2, y2: y0 - rowGap / 2, stroke: "var(--rule)", "stroke-width": 1 }, svg);
+        el("text", { x: 0, y: y0 + laneH + 4, "class": "row" }, svg, t.label);
+        var lanes = [
+          { name: "2025", color: "--paper", list: D.paper_models.map(function (m) { return { n: m.name, v: t.paper(m) }; }) },
+          { name: "2026", color: "--v2", list: D.v2_models.map(function (m) { return { n: short(m.name), v: t.foam ? foam(m, fw.value, t.foam) : t.v2(m) }; }).filter(function (d) { return d.v != null; }) }
+        ];
+        lanes.forEach(function (lane, j) {
+          var yc = y0 + j * laneH + laneH / 2;
+          el("text", { x: x0 - 12, y: yc + 4, "text-anchor": "end", "class": "lane" }, svg, lane.name);
+          el("line", { x1: x0, x2: x0 + plotW, y1: yc, y2: yc, stroke: "var(--grid)", "stroke-width": 1 }, svg);
+          var placed = [];
+          lane.list.slice().sort(function (a, b) { return a.v - b.v; }).forEach(function (d) {
+            var cx = x0 + d.v * plotW, offs = [0, -1, 1, -2, 2], k = 0;
+            while (k < offs.length - 1 && placed.some(function (p) { return Math.abs(p.x - cx) < 2 * r - 1 && p.o === offs[k]; })) k++;
+            placed.push({ x: cx, o: offs[k] });
+            var g = el("g", { "class": "hit" }, svg);
+            el("circle", { "class": "dot focusring", cx: cx, cy: yc + offs[k] * 5, r: r, fill: "var(" + lane.color + ")", stroke: "var(--plate)", "stroke-width": 2 }, g);
+            hover(g, pct(d.v), d.n, t.label + ", " + (lane.name === "2025" ? "original study" : "V2"));
+            rows.push([t.label, lane.name, d.n, f2(d.v)]);
+          });
+          var best = lane.list.reduce(function (a, b) { return b.v > a.v ? b : a; });
+          var bx = x0 + best.v * plotW, flip = best.v > 0.9;
+          el("text", { x: flip ? bx - r - 6 : bx + r + 6, y: yc - r - 3, "text-anchor": flip ? "end" : "start", "class": "val" }, svg, "best " + pct(best.v));
+        });
+      });
+      table(document.getElementById("dots-table"), ["Task", "Year", "Model", "Success rate"], rows, [3]);
+    }
+    fw = segment("dots-fw", render);
+    render();
+  })();
+})();
+</script>
+</body>
+</html>
