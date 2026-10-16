@@ -1,5 +1,7 @@
 # CFDLLMBench V2
 
+**🌐 Website: [nithinsomu.github.io/cfdllmbench_v2](https://nithinsomu.github.io/cfdllmbench_v2/)**
+
 **CFDLLMBench** is a comprehensive benchmark suite designed to assess Large Language Models (LLMs) on key competencies relevant to computational fluid dynamics (CFD). It evaluates LLMs across three interconnected tasks:
 
 - ✅ **CFDQuery**: Conceptual understanding through multiple-choice CFD questions.
@@ -8,7 +10,6 @@
 
 > **What's new in V2:** we updated the prompts for some cases, evaluated newer LLMs, and evaluated the latest version of Foam-Agent.
 > The latest (V2) datasets are included in this repository (see [Datasets](#-datasets)).
-> V2 results page: **[nithinsomu.github.io/cfdllmbench_v2](https://nithinsomu.github.io/cfdllmbench_v2/)**
 
 ---
 
