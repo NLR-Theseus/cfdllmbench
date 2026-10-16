@@ -86,6 +86,12 @@ The datasets used in the original paper are on Kaggle: [CFDQuery](https://www.ka
 
 ---
 
+## 🤝 Contributing
+
+If you wish to contribute to CFDLLMBench, please raise a [pull request](https://github.com/NLR-Theseus/cfdllmbench/pulls) with your prompts and reference files, and we will review it.
+
+---
+
 ## 📄 License
 
 This benchmark is open-source and released under license: BSD-3-Clause.
