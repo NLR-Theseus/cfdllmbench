@@ -95,6 +95,6 @@ nav:
     - CFDCodeBench: components/cfdcodebench.md
     - FoamBench: components/foambench.md
   - Results: results.md
-  - V2 Results: v2/
+  - V2 Results: https://nithinsomu.github.io/cfdllmbench_v2/
   - API Reference: api.md
   - Contributing: contributing.md

@@ -8,7 +8,7 @@
 
 > **What's new in V2:** we updated the prompts for some cases, evaluated newer LLMs, and evaluated the latest version of Foam-Agent.
 > The latest (V2) datasets are included in this repository (see [Datasets](#-datasets)).
-> V2 results page: **[CFDLLMBench V2 results](https://raw.githack.com/NLR-Theseus/cfdllmbench/main/docs/v2/index.html)** (source: [docs/v2/index.html](docs/v2/index.html)).
+> V2 results page: **[nithinsomu.github.io/cfdllmbench_v2](https://nithinsomu.github.io/cfdllmbench_v2/)**
 
 ---
 
@@ -90,7 +90,7 @@ The datasets used in the original paper are on Kaggle: [CFDQuery](https://www.ka
 This benchmark is open-source and released under license: BSD-3-Clause.
 
 ## Citation
-If you use CFD-LLMBench in your research, please cite our paper:
+If you use CFDLLMBench in your research, please cite our paper:
 ```bibtex
 
 @article{somasekharan2025cfdllmbench,
